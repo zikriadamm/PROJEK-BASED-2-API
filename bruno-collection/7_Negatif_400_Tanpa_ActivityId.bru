@@ -1,0 +1,38 @@
+meta {
+  name: 7 - [NEGATIF] Validasi Gagal 400 Payload Tanpa activityId
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/v2/expenses
+  body: json
+  auth: none
+}
+
+headers {
+  x-api-key: {{api_key}}
+  Authorization: Bearer {{auth_token}}
+}
+
+body:json {
+  {
+    "title": "Pengeluaran Tanpa ID Kegiatan",
+    "category": "konsumsi",
+    "currency": "IDR",
+    "amount": 50000,
+    "date": "2026-10-25"
+  }
+}
+
+tests {
+  test("Status code is 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("Server menolak karena breaking change ketiadaan activityId", function() {
+    const body = res.getBody();
+    expect(body.sukses).to.equal(false);
+    expect(body.error).to.contain('activityId');
+  });
+}

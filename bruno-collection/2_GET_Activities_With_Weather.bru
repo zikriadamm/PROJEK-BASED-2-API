@@ -1,0 +1,29 @@
+meta {
+  name: 2 - GET Master Kegiatan Riset & Cuaca Open-Meteo
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/v2/activities
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{api_key}}
+}
+
+tests {
+  test("Status code is 200 OK", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Data kegiatan memuat pengayaan cuaca dan anggaran", function() {
+    const body = res.getBody();
+    expect(body.sukses).to.equal(true);
+    expect(body.data).to.be.an('array');
+    expect(body.data[0]).to.have.property('financialSummary');
+    expect(body.data[0]).to.have.property('currentWeather');
+  });
+}

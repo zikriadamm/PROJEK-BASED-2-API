@@ -1,0 +1,341 @@
+{
+  "info": {
+    "_postman_id": "untad-pbl2-api-collection-2026",
+    "name": "PBL2 - Untad Research Expense API (Kelompok 3)",
+    "description": "Koleksi pengujian otomatis API Standar Industri Sub-CPMK 5 Rekayasa API FT Untad. Dilengkapi skrip uji positif & negatif, ekstraksi token login otomatis, pengujian header Sunset, otorisasi role, dan GraphQL.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "api_key",
+      "value": "untad-api-key-2026"
+    },
+    {
+      "key": "auth_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. POST Login Admin & Auto-Save Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Login berhasil & token bertanda tangan diterbitkan\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.sukses).to.eql(true);",
+              "    pm.expect(jsonData.token).to.be.a('string');",
+              "    pm.expect(jsonData.user.role).to.eql('admin');",
+              "    // Auto-save token ke variabel collection/environment",
+              "    pm.collectionVariables.set(\"auth_token\", jsonData.token);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "x-api-key", "value": "{{api_key}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v2/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["v2", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "2. GET Master Kegiatan Riset & Cuaca Untad",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Data memuat array kegiatan berelasi & cuaca live\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.sukses).to.eql(true);",
+              "    pm.expect(jsonData.data).to.be.an('array');",
+              "    pm.expect(jsonData.data.length).to.be.above(0);",
+              "    pm.expect(jsonData.data[0]).to.have.property('financialSummary');",
+              "    pm.expect(jsonData.data[0]).to.have.property('currentWeather');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "x-api-key", "value": "{{api_key}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v2/activities",
+          "host": ["{{baseUrl}}"],
+          "path": ["v2", "activities"]
+        }
+      }
+    },
+    {
+      "name": "3. POST Tambah Pengeluaran Baru (Relasi activityId)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201 Created\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(\"Pengeluaran tersimpan dengan struktur keuangan cost\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.sukses).to.eql(true);",
+              "    pm.expect(jsonData.data.activityId).to.eql(1);",
+              "    pm.expect(jsonData.data.cost).to.have.property('nominalIDR');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "x-api-key", "value": "{{api_key}}" },
+          { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"activityId\": 1,\n  \"title\": \"Pengujian Sampel Tanah Sesar Sigi di Lab Sipil Untad\",\n  \"category\": \"belanja\",\n  \"currency\": \"IDR\",\n  \"amount\": 850000,\n  \"date\": \"2026-10-25\",\n  \"notes\": \"Pengujian ketahanan geser sampel\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v2/expenses",
+          "host": ["{{baseUrl}}"],
+          "path": ["v2", "expenses"]
+        }
+      }
+    },
+    {
+      "name": "4. GET Legacy v1 Expenses & Verifikasi Sunset Header",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Header Sunset dan Deprecation terpasang sesuai standar\", function () {",
+              "    pm.response.to.have.header(\"Sunset\");",
+              "    pm.expect(pm.response.headers.get(\"Sunset\")).to.include(\"31 Dec 2026\");",
+              "    pm.expect(pm.response.headers.get(\"Deprecation\")).to.eql(\"true\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "x-api-key", "value": "{{api_key}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/expenses",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "expenses"]
+        }
+      }
+    },
+    {
+      "name": "5. [NEGATIF] Akses Ditolak 401 Tanpa Header x-api-key",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 401 Unauthorized\", function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test(\"Server mengembalikan pesan penolakan API Key\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.sukses).to.eql(false);",
+              "    pm.expect(jsonData.error).to.include(\"x-api-key\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v2/expenses",
+          "host": ["{{baseUrl}}"],
+          "path": ["v2", "expenses"]
+        }
+      }
+    },
+    {
+      "name": "6. [NEGATIF] Akses Ditolak 403 Role Mahasiswa Hapus Data",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// Login sementara sebagai mahasiswa untuk mendapatkan token non-admin",
+              "pm.sendRequest({",
+              "    url: pm.collectionVariables.get(\"baseUrl\") + '/v2/auth/login',",
+              "    method: 'POST',",
+              "    header: {",
+              "        'Content-Type': 'application/json',",
+              "        'x-api-key': pm.collectionVariables.get(\"api_key\")",
+              "    },",
+              "    body: {",
+              "        mode: 'raw',",
+              "        raw: JSON.stringify({ username: 'mahasiswa', password: 'mhs123' })",
+              "    }",
+              "}, function (err, res) {",
+              "    if (!err && res.code === 200) {",
+              "        pm.collectionVariables.set(\"mhs_token\", res.json().token);",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 403 Forbidden\", function () {",
+              "    pm.response.to.have.status(403);",
+              "});",
+              "",
+              "pm.test(\"Role mahasiswa diblokir dari operasi administratif\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.sukses).to.eql(false);",
+              "    pm.expect(jsonData.error).to.include(\"Hanya role \\\"admin\\\"\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "x-api-key", "value": "{{api_key}}" },
+          { "key": "Authorization", "value": "Bearer {{mhs_token}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v2/expenses/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["v2", "expenses", "1"]
+        }
+      }
+    },
+    {
+      "name": "7. [NEGATIF] Validasi Gagal 400 Payload Tanpa activityId",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400 Bad Request\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"Menolak pembuatan data tanpa foreign key activityId\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.sukses).to.eql(false);",
+              "    pm.expect(jsonData.error).to.include(\"activityId\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "x-api-key", "value": "{{api_key}}" },
+          { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Pengeluaran Cacat Tanpa ID Kegiatan\",\n  \"category\": \"konsumsi\",\n  \"currency\": \"IDR\",\n  \"amount\": 50000,\n  \"date\": \"2026-10-25\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v2/expenses",
+          "host": ["{{baseUrl}}"],
+          "path": ["v2", "expenses"]
+        }
+      }
+    },
+    {
+      "name": "8. POST GraphQL Query Nested (Activities & Expenses)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"GraphQL mengembalikan data berelasi kegiatan dan pengeluaran\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.data).to.have.property('activities');",
+              "    pm.expect(jsonData.data.activities[0].expenses).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "x-api-key", "value": "{{api_key}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"query { activities { id title financialSummary { formatPlafon statusRisiko } currentWeather { temperatureFormatted condition } expenses { id title cost { formatRupiah } } } }\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/graphql",
+          "host": ["{{baseUrl}}"],
+          "path": ["graphql"]
+        }
+      }
+    }
+  ]
+}
