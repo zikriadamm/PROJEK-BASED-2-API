@@ -1,0 +1,40 @@
+meta {
+  name: 6 - [NEGATIF] Akses Dilarang 403 Role Mahasiswa Coba Hapus Data
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{baseUrl}}/v2/expenses/1
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{api_key}}
+  Authorization: Bearer {{mhs_token}}
+}
+
+script:pre-request {
+  const loginRes = await fetch(bru.getVar('baseUrl') + '/v2/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': bru.getVar('api_key') },
+    body: JSON.stringify({ username: 'mahasiswa', password: 'mhs123' })
+  });
+  const data = await loginRes.json();
+  if (data && data.token) {
+    bru.setVar('mhs_token', data.token);
+  }
+}
+
+tests {
+  test("Status code is 403 Forbidden", function() {
+    expect(res.getStatus()).to.equal(403);
+  });
+  
+  test("Pesan error otorisasi role mahasiswa", function() {
+    const body = res.getBody();
+    expect(body.sukses).to.equal(false);
+    expect(body.error).to.contain('Hanya role "admin"');
+  });
+}

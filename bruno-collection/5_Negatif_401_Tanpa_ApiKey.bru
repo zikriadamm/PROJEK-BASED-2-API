@@ -1,0 +1,23 @@
+meta {
+  name: 5 - [NEGATIF] Akses Ditolak 401 Tanpa Header API Key
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/v2/expenses
+  body: none
+  auth: none
+}
+
+tests {
+  test("Status code is 401 Unauthorized", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+  
+  test("Pesan error API Key ditolak", function() {
+    const body = res.getBody();
+    expect(body.sukses).to.equal(false);
+    expect(body.error).to.contain('x-api-key');
+  });
+}

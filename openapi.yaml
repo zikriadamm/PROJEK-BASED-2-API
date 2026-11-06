@@ -1,0 +1,726 @@
+openapi: 3.0.3
+info:
+  title: Untad Field Research & Travel Expense API
+  description: >
+    API Manajemen Biaya & Logistik Perjalanan Dinas / Riset Lapangan Fakultas Teknik
+    Universitas Tadulako di Sulawesi Tengah. Mengembangkan proyek Evaluasi Sub-CPMK 4
+    menjadi sistem berstandar industri dengan pengamanan berlapis (API Key & Signed Token HMAC-SHA256),
+    pembatasan hak akses berbasis peran (RBAC), GraphQL, integrasi dua Public API tangguh
+    (ExchangeRate-API & Open-Meteo), serta pengelolaan versi (/v1 dan /v2) dengan header Sunset.
+  version: 2.0.0
+  contact:
+    name: Kelompok 3 - Rekayasa API (Kelas TIC)
+    email: rekayasa.api.kel3@untad.ac.id
+servers:
+  - url: http://localhost:3000
+    description: Server Lokal Pengujian & Demo Kampus Untad
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  # ============================================================================
+  # AUTENTIKASI SISTEM
+  # ============================================================================
+  /v2/auth/login:
+    post:
+      tags:
+        - Autentikasi
+      summary: Login pengguna dan penerbitan signed token HMAC-SHA256
+      description: Memverifikasi username dan hash password, lalu menerbitkan token bertanda tangan dengan masa berlaku 2 jam.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Autentikasi berhasil dan token diterbitkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Parameter username atau password tidak lengkap
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Kredensial tidak valid (username/password salah)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ============================================================================
+  # RESOURCE: ACTIVITIES (KEGIATAN RISET FT UNTAD)
+  # ============================================================================
+  /v2/activities:
+    get:
+      tags:
+        - Kegiatan Riset
+      summary: Mendapatkan seluruh daftar kegiatan riset lapangan Untad
+      description: Mengembalikan daftar master kegiatan riset di wilayah Sulawesi Tengah lengkap dengan kalkulasi realisasi keuangan dan cuaca live dari Open-Meteo.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Daftar kegiatan berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sukses:
+                    type: boolean
+                    example: true
+                  jumlah:
+                    type: integer
+                    example: 3
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Activity'
+        '401':
+          $ref: '#/components/responses/UnauthorizedApiKey'
+
+    post:
+      tags:
+        - Kegiatan Riset
+      summary: Menambahkan kegiatan riset baru (Role Admin Only)
+      description: Wajib menyertakan token Bearer role "admin". Pengguna dengan role "mahasiswa" akan ditolak dengan status 403 Forbidden.
+      security:
+        - ApiKeyAuth: []
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateActivityInput'
+      responses:
+        '201':
+          description: Kegiatan riset berhasil dibuat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sukses:
+                    type: boolean
+                    example: true
+                  pesan:
+                    type: string
+                    example: Kegiatan riset lapangan baru berhasil ditambahkan.
+                  data:
+                    $ref: '#/components/schemas/Activity'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedToken'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /v2/activities/{id}:
+    get:
+      tags:
+        - Kegiatan Riset
+      summary: Mendapatkan detail kegiatan riset beserta rincian pengeluaran terelasi
+      description: Mengembalikan objek kegiatan beserta relasi nested array `expenses` dan cuaca posko riset.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID unik kegiatan riset
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Detail kegiatan dan pengeluaran terelasi ditemukan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sukses:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/ActivityDetail'
+        '401':
+          $ref: '#/components/responses/UnauthorizedApiKey'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Kegiatan Riset
+      summary: Memperbarui data kegiatan riset (Role Admin Only)
+      security:
+        - ApiKeyAuth: []
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateActivityInput'
+      responses:
+        '200':
+          description: Data kegiatan berhasil diperbarui
+        '401':
+          $ref: '#/components/responses/UnauthorizedToken'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Kegiatan Riset
+      summary: Menghapus data kegiatan riset (Role Admin Only)
+      security:
+        - ApiKeyAuth: []
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Kegiatan berhasil dihapus
+        '401':
+          $ref: '#/components/responses/UnauthorizedToken'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ============================================================================
+  # RESOURCE: EXPENSES (RINCIAN PENGELUARAN TERELASI)
+  # ============================================================================
+  /v2/expenses:
+    get:
+      tags:
+        - Pengeluaran Riset
+      summary: Mendapatkan seluruh daftar pengeluaran riset
+      description: Mengembalikan data pengeluaran dengan relasi objek kegiatan dan konversi kurs valas live ke Rupiah.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: activityId
+          in: query
+          required: false
+          description: Filter berdasarkan ID kegiatan
+          schema:
+            type: integer
+            example: 1
+        - name: category
+          in: query
+          required: false
+          description: Filter kategori (transportasi, akomodasi, konsumsi, belanja, hiburan)
+          schema:
+            type: string
+            example: transportasi
+        - name: currency
+          in: query
+          required: false
+          description: Filter mata uang acuan (IDR, USD, JPY, EUR, SGD)
+          schema:
+            type: string
+            example: JPY
+      responses:
+        '200':
+          description: Data pengeluaran berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sukses:
+                    type: boolean
+                    example: true
+                  versi:
+                    type: string
+                    example: v2
+                  jumlah:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Expense'
+        '401':
+          $ref: '#/components/responses/UnauthorizedApiKey'
+
+    post:
+      tags:
+        - Pengeluaran Riset
+      summary: Menambahkan catatan pengeluaran riset baru
+      description: Mewajibkan `activityId` (breaking change terhadap Sub-CPMK 4) dan menyertakan token Bearer login.
+      security:
+        - ApiKeyAuth: []
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExpenseInput'
+      responses:
+        '201':
+          description: Pengeluaran berhasil disimpan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sukses:
+                    type: boolean
+                    example: true
+                  pesan:
+                    type: string
+                    example: Catatan pengeluaran riset berhasil ditambahkan ke kegiatan.
+                  data:
+                    $ref: '#/components/schemas/Expense'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedToken'
+        '404':
+          description: ID Kegiatan tidak ditemukan di sistem
+
+  /v2/expenses/{id}:
+    get:
+      tags:
+        - Pengeluaran Riset
+      summary: Detail catatan pengeluaran tunggal
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pengeluaran ditemukan
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Pengeluaran Riset
+      summary: Memperbarui catatan pengeluaran
+      security:
+        - ApiKeyAuth: []
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExpenseInput'
+      responses:
+        '200':
+          description: Pengeluaran berhasil diperbarui
+        '401':
+          $ref: '#/components/responses/UnauthorizedToken'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Pengeluaran Riset
+      summary: Menghapus catatan pengeluaran (Role Admin Only)
+      description: Demonstrasi penegakan hak akses 403 Forbidden jika dicoba oleh pengguna ber-role "mahasiswa".
+      security:
+        - ApiKeyAuth: []
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pengeluaran berhasil dihapus
+        '401':
+          $ref: '#/components/responses/UnauthorizedToken'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/expenses/summary:
+    get:
+      tags:
+        - Analisis Keuangan
+      summary: Konsolidasi total anggaran, realisasi, dan evaluasi risiko over-budget
+      description: Mengintegrasikan data kurs valas live dari ExchangeRate-API dan cuaca kampus Untad dari Open-Meteo.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Ringkasan anggaran berhasil dihitung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SummaryResponse'
+
+  # ============================================================================
+  # LEGACY VERSIONING /v1 (DENGAN HEADER SUNSET)
+  # ============================================================================
+  /v1/expenses:
+    get:
+      tags:
+        - Legacy Sub-CPMK 4 (v1)
+      summary: Endpoint pembacaan pengeluaran format lama Sub-CPMK 4 (DEPRECATED)
+      deprecated: true
+      description: >
+        Tetap melayani pembacaan data format lama flat tanpa relasi activityId demi
+        kompatibilitas sistem klien sebelumnya. Menyertakan header HTTP Sunset resmi:
+        `Sunset: Thu, 31 Dec 2026 23:59:59 GMT` dan `Deprecation: true`.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Data pengeluaran format legacy berhasil disajikan beserta header Sunset
+          headers:
+            Sunset:
+              schema:
+                type: string
+                example: Thu, 31 Dec 2026 23:59:59 GMT
+            Deprecation:
+              schema:
+                type: string
+                example: "true"
+            Link:
+              schema:
+                type: string
+                example: </v2/expenses>; rel="successor-version"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sukses:
+                    type: boolean
+                  versi:
+                    type: string
+                    example: v1 (LEGACY SUB-CPMK 4)
+                  data:
+                    type: array
+                    items:
+                      type: object
+
+# ============================================================================
+# COMPONENTS & SCHEMAS
+# ============================================================================
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API Key global aplikasi (untad-api-key-2026)
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Signed Token HMAC-SHA256 hasil login dari /v2/auth/login
+
+  responses:
+    UnauthorizedApiKey:
+      description: Header x-api-key hilang atau tidak terdaftar
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            sukses: false
+            status: 401
+            error: Header x-api-key wajib disertakan pada seluruh request API.
+
+    UnauthorizedToken:
+      description: Token Bearer tidak disertakan, palsu, atau kedaluwarsa
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            sukses: false
+            status: 401
+            error: Token telah kedaluwarsa (expired). Silakan login kembali.
+
+    Forbidden:
+      description: Pengguna terautentikasi namun tidak memiliki wewenang (Role terbatas)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            sukses: false
+            status: 403
+            error: Akses ditolak. Hanya role admin yang berhak melakukan operasi ini.
+
+    NotFound:
+      description: Sumber daya yang diminta tidak ditemukan
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    BadRequest:
+      description: Format body JSON atau parameter tidak sesuai validasi
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: admin
+        password:
+          type: string
+          example: admin123
+
+    LoginResponse:
+      type: object
+      properties:
+        sukses:
+          type: boolean
+          example: true
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiJ9...
+        tokenType:
+          type: string
+          example: Bearer
+        expiresIn:
+          type: string
+          example: 2 jam (7200 detik)
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+            username:
+              type: string
+            role:
+              type: string
+              example: admin
+            fullName:
+              type: string
+              example: Ir. Tabita C. Theona, M.T.
+
+    Activity:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Survei Geologi Sesar Palu-Koro & Mitigasi Gempa Sigi
+        location:
+          type: string
+          example: Kabupaten Sigi, Sulawesi Tengah
+        budgetLimitIDR:
+          type: number
+          example: 15000000
+        financialSummary:
+          type: object
+          properties:
+            totalSpentIDR:
+              type: number
+              example: 2750000
+            remainingBudgetIDR:
+              type: number
+              example: 12250000
+            statusRisiko:
+              type: string
+              example: AMAN
+        currentWeather:
+          type: object
+          properties:
+            temperatureFormatted:
+              type: string
+              example: 31.5°C
+            condition:
+              type: string
+              example: Cerah Berawan
+
+    ActivityDetail:
+      allOf:
+        - $ref: '#/components/schemas/Activity'
+        - type: object
+          properties:
+            expenses:
+              type: array
+              items:
+                $ref: '#/components/schemas/Expense'
+
+    CreateActivityInput:
+      type: object
+      required:
+        - title
+        - location
+        - budgetLimitIDR
+      properties:
+        title:
+          type: string
+          example: Pemantauan Kualitas Air Teluk Palu
+        location:
+          type: string
+          example: Pantai Talise Kota Palu
+        budgetLimitIDR:
+          type: number
+          example: 10000000
+        latitude:
+          type: number
+          example: -0.873
+        longitude:
+          type: number
+          example: 119.865
+
+    Expense:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        activityId:
+          type: integer
+          example: 1
+        activity:
+          type: object
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+            location:
+              type: string
+        title:
+          type: string
+          example: Sewa Kendaraan Lapangan 4WD Sigi
+        category:
+          type: string
+          example: transportasi
+        cost:
+          type: object
+          properties:
+            amount:
+              type: number
+              example: 1800000
+            currency:
+              type: string
+              example: IDR
+            nominalIDR:
+              type: number
+              example: 1800000
+            formatRupiah:
+              type: string
+              example: Rp 1.800.000
+        date:
+          type: string
+          example: 2026-10-16
+        submittedBy:
+          type: string
+
+    CreateExpenseInput:
+      type: object
+      required:
+        - activityId
+        - title
+        - category
+        - amount
+        - currency
+        - date
+      properties:
+        activityId:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Sewa Drone Pemetaan Geologi
+        category:
+          type: string
+          example: transportasi
+        amount:
+          type: number
+          example: 1200000
+        currency:
+          type: string
+          example: IDR
+        date:
+          type: string
+          example: 2026-10-25
+        notes:
+          type: string
+          example: Nota survei geologi nomor 042
+
+    SummaryResponse:
+      type: object
+      properties:
+        sukses:
+          type: boolean
+          example: true
+        ringkasanKeuanganFakultas:
+          type: object
+          properties:
+            totalPlafonAnggaranIDR:
+              type: number
+            totalRealisasiIDR:
+              type: number
+            sisaAnggaranIDR:
+              type: number
+            persentasePemakaian:
+              type: string
+            statusRisiko:
+              type: string
+        pengayaanPublicAPI:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        sukses:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 401
+        error:
+          type: string
+          example: Pesan kesalahan

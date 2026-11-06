@@ -1,0 +1,26 @@
+meta {
+  name: 4 - GET Legacy v1 Expenses & Verifikasi Sunset Header
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/v1/expenses
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{api_key}}
+}
+
+tests {
+  test("Status code is 200 OK", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Membawa header Sunset dan Deprecation", function() {
+    expect(res.getHeader('sunset')).to.contain('31 Dec 2026');
+    expect(res.getHeader('deprecation')).to.equal('true');
+  });
+}

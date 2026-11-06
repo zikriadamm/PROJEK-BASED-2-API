@@ -1,0 +1,41 @@
+meta {
+  name: 3 - POST Tambah Pengeluaran Baru (Relasi activityId)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/v2/expenses
+  body: json
+  auth: none
+}
+
+headers {
+  x-api-key: {{api_key}}
+  Authorization: Bearer {{auth_token}}
+}
+
+body:json {
+  {
+    "activityId": 1,
+    "title": "Uji Kuat Tekan Sampel Batuan Sesar Sigi",
+    "category": "belanja",
+    "currency": "IDR",
+    "amount": 750000,
+    "date": "2026-10-24",
+    "notes": "Pengujian laboratorium mekanika tanah"
+  }
+}
+
+tests {
+  test("Status code is 201 Created", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Pengeluaran tersimpan dengan relasi kegiatan dan format cost", function() {
+    const body = res.getBody();
+    expect(body.sukses).to.equal(true);
+    expect(body.data.activityId).to.equal(1);
+    expect(body.data.cost).to.have.property('nominalIDR');
+  });
+}
