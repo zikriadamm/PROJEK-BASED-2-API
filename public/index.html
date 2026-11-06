@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Untad Field Research & Expense Management System</title>
+  <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+  <!-- Header / Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="logo-shield">FT</div>
+        <div>
+          <h1>Untad Field Research Expense</h1>
+          <p class="subtitle">Fakultas Teknik Universitas Tadulako • Evaluasi Sub-CPMK 5</p>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="user-badge" id="userBadge">
+          <span class="status-indicator"></span>
+          <span id="userStatusText">Mode Tamu (Gunakan Login untuk Akses Penuh)</span>
+        </div>
+        <button class="btn btn-outline" id="btnLoginModal">Masuk / Login</button>
+        <button class="btn btn-danger hidden" id="btnLogout">Keluar</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- Public API Live Widgets Bar -->
+    <section class="live-widgets-grid">
+      <!-- Widget 1: Open-Meteo Cuaca Posko Untad -->
+      <div class="widget-card weather-card">
+        <div class="widget-header">
+          <span class="widget-tag">Public API 1: Open-Meteo</span>
+          <span class="live-dot" title="Live Data Online"></span>
+        </div>
+        <div class="weather-body">
+          <div class="weather-temp" id="widgetWeatherTemp">--°C</div>
+          <div>
+            <div class="weather-condition" id="widgetWeatherCondition">Memuat cuaca kampus...</div>
+            <div class="weather-sub" id="widgetWeatherLocation">Kampus Untad Tondo, Palu (Sulteng)</div>
+          </div>
+        </div>
+        <div class="widget-footer" id="widgetWeatherWind">Kecepatan Angin: -- km/h</div>
+      </div>
+
+      <!-- Widget 2: ExchangeRate-API Kurs Valas -->
+      <div class="widget-card rate-card">
+        <div class="widget-header">
+          <span class="widget-tag">Public API 2: ExchangeRate-API</span>
+          <span class="live-dot" title="Live Data Online"></span>
+        </div>
+        <div class="rate-body">
+          <div class="rate-item">
+            <span class="cur-code">1 USD</span>
+            <span class="cur-val" id="rateUSD">≈ Rp 16.250</span>
+          </div>
+          <div class="rate-item">
+            <span class="cur-code">1 JPY</span>
+            <span class="cur-val" id="rateJPY">≈ Rp 108</span>
+          </div>
+          <div class="rate-item">
+            <span class="cur-code">1 EUR</span>
+            <span class="cur-val" id="rateEUR">≈ Rp 17.650</span>
+          </div>
+        </div>
+        <div class="widget-footer">Referensi Resmi Anggaran Riset Internasional</div>
+      </div>
+
+      <!-- Widget 3: Ringkasan Anggaran Fakultas -->
+      <div class="widget-card budget-card">
+        <div class="widget-header">
+          <span class="widget-tag">Konsolidasi Anggaran Riset FT</span>
+          <span class="badge-status badge-safe" id="budgetRiskBadge">AMAN</span>
+        </div>
+        <div class="budget-body">
+          <div class="budget-main" id="budgetTotalRealisasi">Rp 0</div>
+          <div class="budget-sub" id="budgetTotalPlafon">dari Total Pagu: Rp 0</div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="budgetProgressBar" style="width: 0%;"></div>
+        </div>
+        <div class="widget-footer" id="budgetRemainingText">Sisa Kuota: Rp 0 (0% Terserap)</div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs-nav">
+      <button class="tab-btn active" data-tab="tabActivities">Kegiatan Riset Lapangan (Untad)</button>
+      <button class="tab-btn" data-tab="tabExpenses">Rincian Pengeluaran Terelasi</button>
+      <button class="tab-btn" data-tab="tabSunset">Uji Versi /v1 vs /v2 (Header Sunset)</button>
+      <button class="tab-btn" data-tab="tabGraphQL">GraphQL Interactive Explorer</button>
+    </nav>
+
+    <!-- TAB 1: DAFTAR KEGIATAN RISET (ACTIVITIES) -->
+    <section class="tab-content active" id="tabActivities">
+      <div class="section-toolbar">
+        <div>
+          <h2>Master Kegiatan Riset & Pengabdian FT Untad</h2>
+          <p class="section-desc">Resource utama berelasi (1 Kegiatan : Banyak Pengeluaran) berlatar lokasi Sulawesi Tengah.</p>
+        </div>
+        <button class="btn btn-primary" id="btnTambahKegiatanModal">+ Tambah Kegiatan (Admin)</button>
+      </div>
+
+      <div class="activities-grid" id="activitiesGrid">
+        <div class="loading-state">Memuat data kegiatan riset...</div>
+      </div>
+    </section>
+
+    <!-- TAB 2: RINCIAN PENGELUARAN (EXPENSES) -->
+    <section class="tab-content" id="tabExpenses">
+      <div class="section-toolbar">
+        <div>
+          <h2>Daftar Pengeluaran Riset (REST API /v2/expenses)</h2>
+          <p class="section-desc">Mewajibkan relasi activityId, kalkulasi valas live ke IDR, dan catatan penginput.</p>
+        </div>
+        <div class="toolbar-controls">
+          <select id="filterCategory" class="form-select">
+            <option value="">Semua Kategori</option>
+            <option value="transportasi">Transportasi</option>
+            <option value="akomodasi">Akomodasi</option>
+            <option value="konsumsi">Konsumsi</option>
+            <option value="belanja">Belanja / Logistik</option>
+            <option value="hiburan">Lainnya / Kegiatan</option>
+          </select>
+          <button class="btn btn-primary" id="btnTambahExpenseModal">+ Catat Pengeluaran</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Judul Pengeluaran</th>
+              <th>Kegiatan Riset</th>
+              <th>Kategori</th>
+              <th>Biaya Asli</th>
+              <th>Konversi IDR Live</th>
+              <th>Tanggal</th>
+              <th>Penginput</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="expensesTableBody">
+            <tr><td colspan="9" class="text-center">Memuat daftar pengeluaran...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 3: PENGUJIAN VERSI & HEADER SUNSET -->
+    <section class="tab-content" id="tabSunset">
+      <div class="section-toolbar">
+        <div>
+          <h2>Verifikasi Evolusi Versioning (/v1 vs /v2)</h2>
+          <p class="section-desc">Membuktikan kepatuhan Spesifikasi Wajib #5: Endpoint /v1 melayani GET dengan header HTTP Sunset.</p>
+        </div>
+      </div>
+
+      <div class="sunset-grid">
+        <div class="sunset-card">
+          <div class="card-header-bar">
+            <h3>REST /v1/expenses (Format Lama Sub-CPMK 4)</h3>
+            <span class="badge-status badge-warning">DEPRECATED</span>
+          </div>
+          <p>Membawa header <code>Sunset: Thu, 31 Dec 2026 23:59:59 GMT</code>. Mengembalikan format data flat tanpa relasi activityId.</p>
+          <button class="btn btn-secondary" id="btnTestV1">Panggil GET /v1/expenses</button>
+          <div class="response-box" id="resBoxV1">Klik tombol di atas untuk melakukan request live...</div>
+        </div>
+
+        <div class="sunset-card">
+          <div class="card-header-bar">
+            <h3>REST /v2/expenses (Standar Industri Baru)</h3>
+            <span class="badge-status badge-success">ACTIVE & STABLE</span>
+          </div>
+          <p>Mewajibkan <code>activityId</code>, struktur keuangan bersarang <code>cost</code>, dan evaluasi realisasi anggaran.</p>
+          <button class="btn btn-secondary" id="btnTestV2">Panggil GET /v2/expenses</button>
+          <div class="response-box" id="resBoxV2">Klik tombol di atas untuk melakukan request live...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: GRAPHQL EXPLORER -->
+    <section class="tab-content" id="tabGraphQL">
+      <div class="section-toolbar">
+        <div>
+          <h2>GraphQL Endpoint (POST /graphql)</h2>
+          <p class="section-desc">Mendukung relasi data bersarang (nested activities & expenses), query berargumen, dan mutation.</p>
+        </div>
+        <button class="btn btn-primary" id="btnRunGraphQL">Jalankan Query (Ctrl+Enter)</button>
+      </div>
+
+      <div class="gql-layout">
+        <div class="gql-editor-panel">
+          <div class="editor-header">GraphQL Query Input</div>
+          <textarea id="gqlQueryInput" class="gql-textarea" spellcheck="false">{
+  activities {
+    id
+    title
+    location
+    financialSummary {
+      formatPlafon
+      formatRealisasi
+      formatSisaAnggaran
+      statusRisiko
+    }
+    currentWeather {
+      temperatureFormatted
+      condition
+    }
+    expenses {
+      id
+      title
+      category
+      cost {
+        amount
+        currency
+        formatRupiah
+      }
+    }
+  }
+}</textarea>
+        </div>
+        <div class="gql-result-panel">
+          <div class="editor-header">Response JSON</div>
+          <pre id="gqlResultOutput" class="gql-output">Tekan "Jalankan Query" untuk melihat hasil dari server native...</pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: LOGIN -->
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Login Sistem Riset FT Untad</h3>
+        <button class="close-btn" onclick="tutupModal('loginModal')">&times;</button>
+      </div>
+      <form id="formLogin" class="modal-form">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="loginUsername" class="form-input" placeholder="admin atau mahasiswa" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" class="form-input" placeholder="admin123 atau mhs123" required>
+        </div>
+        <div class="account-hints">
+          <p><strong>Akun Demo Tersedia:</strong></p>
+          <p>• Role Admin: <code>admin</code> / <code>admin123</code> (Hak CRUD penuh)</p>
+          <p>• Role Mahasiswa: <code>mahasiswa</code> / <code>mhs123</code> (Hanya catat pengeluaran)</p>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="tutupModal('loginModal')">Batal</button>
+          <button type="submit" class="btn btn-primary">Masuk & Dapatkan Token</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: TAMBAH EXPENSE -->
+  <div class="modal-overlay hidden" id="expenseModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Catat Pengeluaran Riset Baru (/v2/expenses)</h3>
+        <button class="close-btn" onclick="tutupModal('expenseModal')">&times;</button>
+      </div>
+      <form id="formExpense" class="modal-form">
+        <div class="form-group">
+          <label>Kegiatan Riset Lapangan (Wajib)</label>
+          <select id="expenseActivitySelect" class="form-select" required></select>
+        </div>
+        <div class="form-group">
+          <label>Judul Pengeluaran</label>
+          <input type="text" id="expenseTitle" class="form-input" placeholder="Contoh: Sewa Perahu Survei Pesisir" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Kategori</label>
+            <select id="expenseCategory" class="form-select" required>
+              <option value="transportasi">Transportasi</option>
+              <option value="akomodasi">Akomodasi</option>
+              <option value="konsumsi">Konsumsi</option>
+              <option value="belanja">Belanja / Perlengkapan</option>
+              <option value="hiburan">Kegiatan / Seminar</option>
+              <option value="lainnya">Lainnya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Mata Uang</label>
+            <select id="expenseCurrency" class="form-select" required>
+              <option value="IDR">IDR (Rupiah)</option>
+              <option value="USD">USD (Dollar AS)</option>
+              <option value="JPY">JPY (Yen Jepang)</option>
+              <option value="EUR">EUR (Euro)</option>
+              <option value="SGD">SGD (Dollar Singapura)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nominal Pengeluaran</label>
+            <input type="number" id="expenseAmount" class="form-input" min="1" step="any" placeholder="Contoh: 1500000" required>
+          </div>
+          <div class="form-group">
+            <label>Tanggal</label>
+            <input type="date" id="expenseDate" class="form-input" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Catatan Tambahan (Opsional)</label>
+          <input type="text" id="expenseNotes" class="form-input" placeholder="Rincian pos kegiatan atau nomor nota">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="tutupModal('expenseModal')">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan Pengeluaran</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <p>© 2026 Kelompok 3 - Rekayasa API (Kelas TIC) • Fakultas Teknik Universitas Tadulako</p>
+      <p class="footer-sub">Lidiya (F5512530118) • Tabita C. Theona (F5512520086) • M. Zikri Adam (F5512530117) • Trista S. Lambei (F5512530106)</p>
+    </div>
+  </footer>
+
+  <script src="/public/app.js"></script>
+</body>
+</html>
