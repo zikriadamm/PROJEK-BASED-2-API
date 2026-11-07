@@ -304,9 +304,17 @@ document.getElementById('btnRunGraphQL')?.addEventListener('click', async () => 
   out.textContent = 'Mengeksekusi query di GraphQL engine native...';
 
   try {
+    const headers = {
+      'Content-Type': 'application/json',
+      'x-api-key': API_KEY
+    };
+    if (currentToken) {
+      headers['Authorization'] = `Bearer ${currentToken}`;
+    }
+
     const res = await fetch('/graphql', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ query })
     });
     const json = await res.json();
