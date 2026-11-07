@@ -258,7 +258,11 @@ document.getElementById('btnTestV1')?.addEventListener('click', async () => {
   if (box) box.textContent = 'Menghubungi GET /v1/expenses...';
 
   try {
-    const res = await fetch('/v1/expenses');
+    const res = await fetch('/v1/expenses', {
+      headers: {
+        'x-api-key': API_KEY
+      }
+    });
     const sunsetHeader = res.headers.get('sunset');
     const deprecation = res.headers.get('deprecation');
     const json = await res.json();
