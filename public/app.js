@@ -1,4 +1,4 @@
-// Client Web Dashboard Application - Vanguard Tier
+// Client Web Dashboard Application - Vanguard Tier (Impeccable Edition)
 const API_KEY = 'untad-api-key-2026';
 let currentUser = null;
 let currentToken = sessionStorage.getItem('untad_token') || null;
@@ -31,10 +31,12 @@ async function apiRequest(endpoint, options = {}) {
 
 // Modal Helpers
 function bukaModal(id) {
-  document.getElementById(id).classList.remove('hidden');
+  const modal = document.getElementById(id);
+  if (modal) modal.classList.remove('hidden');
 }
 function tutupModal(id) {
-  document.getElementById(id).classList.add('hidden');
+  const modal = document.getElementById(id);
+  if (modal) modal.classList.add('hidden');
 }
 
 // Update User UI State
@@ -43,18 +45,20 @@ function updateAuthUI() {
   const statusText = document.getElementById('userStatusText');
   const btnLogin = document.getElementById('btnLoginModal');
   const btnLogout = document.getElementById('btnLogout');
-  const indicator = badge.querySelector('.status-indicator');
+  const indicator = badge ? badge.querySelector('.status-dot') : null;
 
   if (currentUser) {
-    indicator.classList.add('active');
-    statusText.innerHTML = `<strong style="color:#ffffff;">${currentUser.fullName}</strong> (${currentUser.role.toUpperCase()})`;
-    btnLogin.classList.add('hidden');
-    btnLogout.classList.remove('hidden');
+    if (indicator) indicator.classList.add('active');
+    if (statusText) {
+      statusText.innerHTML = `<strong>${currentUser.fullName}</strong> (${currentUser.role.toUpperCase()})`;
+    }
+    if (btnLogin) btnLogin.classList.add('hidden');
+    if (btnLogout) btnLogout.classList.remove('hidden');
   } else {
-    indicator.classList.remove('active');
-    statusText.textContent = 'Mode Tamu (Read-Only)';
-    btnLogin.classList.remove('hidden');
-    btnLogout.classList.add('hidden');
+    if (indicator) indicator.classList.remove('active');
+    if (statusText) statusText.textContent = 'Mode Tamu (Read-Only)';
+    if (btnLogin) btnLogin.classList.remove('hidden');
+    if (btnLogout) btnLogout.classList.add('hidden');
   }
 }
 
@@ -69,9 +73,13 @@ async function loadSummaryWidgets() {
 
   // Weather Widget
   if (pub && pub.cuacaUntad) {
-    document.getElementById('widgetWeatherTemp').textContent = pub.cuacaUntad.temperatureFormatted || '--°C';
-    document.getElementById('widgetWeatherCondition').textContent = pub.cuacaUntad.condition || 'Cerah Berawan';
-    const windSpan = document.getElementById('widgetWeatherWind').querySelector('span');
+    const tempEl = document.getElementById('widgetWeatherTemp');
+    if (tempEl) tempEl.textContent = pub.cuacaUntad.temperatureFormatted || '--°C';
+
+    const condEl = document.getElementById('widgetWeatherCondition');
+    if (condEl) condEl.textContent = pub.cuacaUntad.condition || 'Cerah Berawan';
+
+    const windSpan = document.getElementById('widgetWeatherWind')?.querySelector('span');
     if (windSpan) {
       windSpan.textContent = `Kecepatan Angin: ${pub.cuacaUntad.windSpeedFormatted || '--'} (${pub.cuacaUntad.status})`;
     }
@@ -80,26 +88,34 @@ async function loadSummaryWidgets() {
   // Currency Widget
   if (pub && pub.kursValas && pub.kursValas.kursIDRperUSD) {
     const usd = Math.round(pub.kursValas.kursIDRperUSD);
-    document.getElementById('rateUSD').textContent = `≈ Rp ${usd.toLocaleString('id-ID')}`;
-    document.getElementById('rateJPY').textContent = `≈ Rp ${Math.round(usd / 150).toLocaleString('id-ID')}`;
-    document.getElementById('rateEUR').textContent = `≈ Rp ${Math.round(usd * 1.08).toLocaleString('id-ID')}`;
+    const usdEl = document.getElementById('rateUSD');
+    const jpyEl = document.getElementById('rateJPY');
+    const eurEl = document.getElementById('rateEUR');
+    if (usdEl) usdEl.textContent = `≈ Rp ${usd.toLocaleString('id-ID')}`;
+    if (jpyEl) jpyEl.textContent = `≈ Rp ${Math.round(usd / 150).toLocaleString('id-ID')}`;
+    if (eurEl) eurEl.textContent = `≈ Rp ${Math.round(usd * 1.08).toLocaleString('id-ID')}`;
   }
 
   // Budget Widget
   if (fin) {
-    document.getElementById('budgetTotalRealisasi').textContent = fin.formatTotalRealisasi;
-    document.getElementById('budgetTotalPlafon').textContent = `dari Total Pagu: ${fin.formatTotalPlafon}`;
-    const pBar = document.getElementById('budgetProgressBar');
-    pBar.style.width = fin.persentasePemakaian;
+    const realEl = document.getElementById('budgetTotalRealisasi');
+    const plafonEl = document.getElementById('budgetTotalPlafon');
+    if (realEl) realEl.textContent = fin.formatTotalRealisasi;
+    if (plafonEl) plafonEl.textContent = `dari Total Pagu: ${fin.formatTotalPlafon}`;
 
-    const remainingSpan = document.getElementById('budgetRemainingText').querySelector('span');
+    const pBar = document.getElementById('budgetProgressBar');
+    if (pBar) pBar.style.width = fin.persentasePemakaian;
+
+    const remainingSpan = document.getElementById('budgetRemainingText')?.querySelector('span');
     if (remainingSpan) {
       remainingSpan.textContent = `Sisa Kuota: ${fin.formatSisaAnggaran} (${fin.persentasePemakaian} Terserap)`;
     }
 
     const badge = document.getElementById('budgetRiskBadge');
-    badge.textContent = fin.statusRisiko;
-    badge.className = 'status-chip ' + (fin.statusRisiko === 'AMAN' ? 'chip-safe' : 'chip-deprecated');
+    if (badge) {
+      badge.textContent = fin.statusRisiko;
+      badge.className = fin.statusRisiko === 'AMAN' ? 'status-pill-safe' : 'badge-deprecated';
+    }
   }
 }
 
@@ -110,79 +126,81 @@ async function loadActivities() {
   const res = await apiRequest('/v2/activities');
 
   if (!res.ok || !res.data) {
-    grid.innerHTML = '<div class="empty-loader">Gagal memuat data kegiatan riset.</div>';
+    if (grid) grid.innerHTML = '<div class="empty-state">Gagal memuat data kegiatan riset.</div>';
     return;
   }
 
   const activities = res.data.data;
-  grid.innerHTML = '';
-  selectAct.innerHTML = '<option value="">-- Pilih Kegiatan Riset --</option>';
+  if (grid) grid.innerHTML = '';
+  if (selectAct) selectAct.innerHTML = '<option value="">-- Pilih Kegiatan Riset --</option>';
 
   activities.forEach((act) => {
     // Dropdown option
-    const opt = document.createElement('option');
-    opt.value = act.id;
-    opt.textContent = `[ID ${act.id}] ${act.title} (${act.location})`;
-    selectAct.appendChild(opt);
+    if (selectAct) {
+      const opt = document.createElement('option');
+      opt.value = act.id;
+      opt.textContent = `[ID ${act.id}] ${act.title} (${act.location})`;
+      selectAct.appendChild(opt);
+    }
 
-    // Double-Bezel Card element
+    // Activity Card element (Single-Elevation Architecture)
     const fin = act.financialSummary;
-    const card = document.createElement('div');
-    card.className = 'double-bezel activity-bezel';
+    const card = document.createElement('article');
+    card.className = 'activity-card';
     card.innerHTML = `
-      <div class="double-bezel-inner activity-inner">
-        <div>
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:0.5rem;">
-            <h3 class="activity-card-title">${act.title}</h3>
-            <span class="status-chip ${fin.statusRisiko === 'AMAN' ? 'chip-safe' : 'chip-deprecated'}">${fin.statusRisiko}</span>
-          </div>
-          <div class="activity-card-geo">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span>${act.location}</span>
-          </div>
-          <div class="weather-badge-pill">
-            <span>☁️ Cuaca Posko:</span>
-            <strong style="color:#ffffff;">${act.currentWeather ? `${act.currentWeather.condition} (${act.currentWeather.temperatureFormatted})` : 'Normal'}</strong>
-          </div>
-          <p class="activity-desc">${act.description || ''}</p>
-          <div class="activity-meta-row">
-            <span>👤 Ketua: <strong style="color:#ffffff;">${act.leadResearcher}</strong> | 🏢 ${act.unit}</span>
-          </div>
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:0.5rem;">
+          <h3 class="activity-card-title">${act.title}</h3>
+          <span class="status-pill-safe">${fin.statusRisiko}</span>
         </div>
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700; margin-bottom:0.25rem;">
-            <span style="color:#94a3b8;">Realisasi: <strong style="color:#38bdf8;">${fin.formatRealisasi}</strong></span>
-            <span style="color:#64748b;">Plafon: ${fin.formatPlafon}</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" style="width: ${fin.usagePercentage};"></div>
-          </div>
-          <div style="font-size:0.75rem; color:#64748b; display:flex; justify-content:space-between; margin-top:0.4rem;">
-            <span>${fin.jumlahPengeluaran} Transaksi Tercatat</span>
-            <span>Sisa: <strong style="color:#10b981;">${fin.formatSisaAnggaran}</strong></span>
-          </div>
+        <div class="activity-card-geo">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>${act.location}</span>
+        </div>
+        <div class="weather-badge-pill">
+          <span>Stasiun Cuaca:</span>
+          <strong>${act.currentWeather ? `${act.currentWeather.condition} (${act.currentWeather.temperatureFormatted})` : 'Normal'}</strong>
+        </div>
+        <p class="activity-desc">${act.description || ''}</p>
+        <div class="activity-meta-row">
+          <span>Ketua: <strong>${act.leadResearcher}</strong> | Unit: ${act.unit}</span>
+        </div>
+      </div>
+      <div>
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:600; margin-bottom:0.35rem;">
+          <span style="color:var(--text-secondary);">Realisasi: <strong style="color:var(--accent-cyan); font-family:var(--font-mono);">${fin.formatRealisasi}</strong></span>
+          <span style="color:var(--text-muted); font-family:var(--font-mono);">Plafon: ${fin.formatPlafon}</span>
+        </div>
+        <div class="progress-container" role="progressbar" aria-label="Penyerapan Dana Riset">
+          <div class="progress-bar-fill" style="width: ${fin.usagePercentage};"></div>
+        </div>
+        <div style="font-size:0.775rem; color:var(--text-muted); display:flex; justify-content:space-between; margin-top:0.45rem;">
+          <span>${fin.jumlahPengeluaran} Transaksi</span>
+          <span>Sisa: <strong style="color:var(--accent-emerald); font-family:var(--font-mono);">${fin.formatSisaAnggaran}</strong></span>
         </div>
       </div>
     `;
-    grid.appendChild(card);
+    if (grid) grid.appendChild(card);
   });
 }
 
 // 3. Load Expenses
 async function loadExpenses(categoryFilter = '') {
   const tbody = document.getElementById('expensesTableBody');
+  if (!tbody) return;
+
   let url = '/v2/expenses';
   if (categoryFilter) url += `?category=${encodeURIComponent(categoryFilter)}`;
 
   const res = await apiRequest(url);
   if (!res.ok || !res.data) {
-    tbody.innerHTML = '<tr><td colspan="9" class="text-center" style="padding:2rem;">Gagal memuat pengeluaran.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" class="cell-center">Gagal memuat pengeluaran.</td></tr>';
     return;
   }
 
   const items = res.data.data;
   if (!items || items.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" class="text-center" style="padding:2rem;">Belum ada catatan transaksi tersimpan.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" class="cell-center">Belum ada catatan transaksi tersimpan.</td></tr>';
     return;
   }
 
@@ -192,23 +210,23 @@ async function loadExpenses(categoryFilter = '') {
     tr.innerHTML = `
       <td><span class="id-tag">#${item.id}</span></td>
       <td>
-        <strong style="color:#ffffff; font-size:0.875rem;">${item.title}</strong>
-        ${item.notes ? `<div style="font-size:0.75rem; color:#64748b; margin-top:0.15rem;">${item.notes}</div>` : ''}
+        <strong style="color:var(--text-primary); font-size:0.875rem;">${item.title}</strong>
+        ${item.notes ? `<div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.15rem;">${item.notes}</div>` : ''}
       </td>
       <td>
-        <span style="color:#38bdf8; font-weight:600; font-size:0.825rem;">${item.activity.title}</span>
-        <div style="font-size:0.75rem; color:#64748b;">📍 ${item.activity.location}</div>
+        <span style="color:var(--accent-cyan); font-weight:600; font-size:0.825rem;">${item.activity.title}</span>
+        <div style="font-size:0.75rem; color:var(--text-muted);">📍 ${item.activity.location}</div>
       </td>
       <td><span class="category-chip">${item.category}</span></td>
       <td><span class="amount-raw">${item.cost.amount.toLocaleString('id-ID')} ${item.cost.currency}</span></td>
       <td>
         <div class="amount-idr">${item.cost.formatRupiah}</div>
-        <div style="font-size:0.725rem; color:#64748b;">${item.cost.kursPerSatuan}</div>
+        <div style="font-size:0.725rem; color:var(--text-muted); font-family:var(--font-mono);">${item.cost.kursPerSatuan}</div>
       </td>
-      <td style="font-family:var(--font-mono); font-size:0.8rem; color:#94a3b8;">${item.date}</td>
-      <td style="font-size:0.75rem; color:#94a3b8;">${item.submittedBy}</td>
+      <td style="font-family:var(--font-mono); font-size:0.8rem; color:var(--text-secondary);">${item.date}</td>
+      <td style="font-size:0.775rem; color:var(--text-muted);">${item.submittedBy}</td>
       <td>
-        <button class="btn-micro" style="color:#fda4af; border-color:rgba(244,63,94,0.3);" onclick="hapusExpense(${item.id})">Hapus</button>
+        <button type="button" class="btn-micro" style="color:#fca5a5; border-color:rgba(244,63,94,0.3);" onclick="hapusExpense(${item.id})">Hapus</button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -219,18 +237,12 @@ async function loadExpenses(categoryFilter = '') {
 async function hapusExpense(id) {
   if (!confirm(`Apakah Anda yakin ingin menghapus pengeluaran ID #${id}?`)) return;
 
-  const res = await apiRequest(`/v2/expenses/${id}`, { method: 'DELETE' });
-  if (res.status === 401) {
-    alert('401 Unauthorized: Anda belum terautentikasi! Silakan login terlebih dahulu.');
-    bukaModal('loginModal');
-    return;
-  }
-  if (res.status === 403) {
-    alert(`403 Forbidden! ${res.data.error}\n\n(Hanya role "admin" yang berhak menghapus data. Ini membuktikan sistem keamanan RBAC berfungsi sesuai spesifikasi!)`);
-    return;
-  }
+  const res = await apiRequest(`/v2/expenses/${id}`, {
+    method: 'DELETE'
+  });
+
   if (!res.ok) {
-    alert(`Error ${res.status}: ${res.data?.error || 'Gagal menghapus'}`);
+    alert(`Gagal menghapus: ${res.data?.error || 'Akses ditolak (butuh role admin)'}`);
     return;
   }
 
@@ -240,56 +252,79 @@ async function hapusExpense(id) {
   loadSummaryWidgets();
 }
 
-// 5. Test v1 vs v2 Sunset Demonstration
-document.getElementById('btnTestV1').addEventListener('click', async () => {
+// 5. Test Sunset v1 & Active v2
+document.getElementById('btnTestV1')?.addEventListener('click', async () => {
   const box = document.getElementById('resBoxV1');
-  box.textContent = 'Memanggil GET /v1/expenses...';
-  const res = await apiRequest('/v1/expenses');
+  if (box) box.textContent = 'Menghubungi GET /v1/expenses...';
 
-  const headersObj = {};
-  res.headers.forEach((val, key) => {
-    if (['sunset', 'deprecation', 'link', 'content-type'].includes(key.toLowerCase())) {
-      headersObj[key] = val;
-    }
-  });
+  try {
+    const res = await fetch('/v1/expenses');
+    const sunsetHeader = res.headers.get('sunset');
+    const deprecation = res.headers.get('deprecation');
+    const json = await res.json();
 
-  box.textContent = `=== HTTP RESPONSE HEADERS ===\n${JSON.stringify(headersObj, null, 2)}\n\n=== RESPONSE BODY JSON ===\n${JSON.stringify(res.data, null, 2)}`;
+    const output = {
+      httpStatus: res.status,
+      responseHeaders: {
+        'Sunset': sunsetHeader,
+        'Deprecation': deprecation
+      },
+      catatanAudit: 'Membuktikan kepatuhan Sub-CPMK 4 & RFC 8594 Sunset Header',
+      payloadV1: json
+    };
+
+    if (box) box.textContent = JSON.stringify(output, null, 2);
+  } catch (err) {
+    if (box) box.textContent = 'Error: ' + err.message;
+  }
 });
 
-document.getElementById('btnTestV2').addEventListener('click', async () => {
+document.getElementById('btnTestV2')?.addEventListener('click', async () => {
   const box = document.getElementById('resBoxV2');
-  box.textContent = 'Memanggil GET /v2/expenses...';
+  if (box) box.textContent = 'Menghubungi GET /v2/expenses...';
+
   const res = await apiRequest('/v2/expenses');
-  box.textContent = JSON.stringify(res.data, null, 2);
+  if (box) {
+    box.textContent = JSON.stringify({
+      httpStatus: res.status,
+      catatanAudit: 'Format standar industri v2 dengan relasi activityId, cost object, & validasi valas',
+      response: res.data
+    }, null, 2);
+  }
 });
 
-// 6. GraphQL Runner
-document.getElementById('btnRunGraphQL').addEventListener('click', async () => {
+// 6. GraphQL Query Runner
+document.getElementById('btnRunGraphQL')?.addEventListener('click', async () => {
   const query = document.getElementById('gqlQueryInput').value;
-  const outBox = document.getElementById('gqlResultOutput');
-  outBox.textContent = 'Mengeksekusi query di server native HTTP...';
+  const out = document.getElementById('gqlResultOutput');
+  out.textContent = 'Mengeksekusi query di GraphQL engine native...';
 
-  const res = await apiRequest('/graphql', {
-    method: 'POST',
-    body: JSON.stringify({ query })
-  });
-
-  outBox.textContent = JSON.stringify(res.data, null, 2);
+  try {
+    const res = await fetch('/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query })
+    });
+    const json = await res.json();
+    out.textContent = JSON.stringify(json, null, 2);
+  } catch (err) {
+    out.textContent = 'Error eksekusi GraphQL: ' + err.message;
+  }
 });
 
-// 7. Login Form Handler
-document.getElementById('formLogin').addEventListener('submit', async (e) => {
+// 7. Forms Handling
+document.getElementById('formLogin')?.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const u = document.getElementById('loginUsername').value.trim();
-  const p = document.getElementById('loginPassword').value.trim();
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
 
   const res = await apiRequest('/v2/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ username: u, password: p })
+    body: JSON.stringify({ username, password })
   });
 
   if (!res.ok) {
-    alert(`Login Gagal (${res.status}): ${res.data?.error || 'Kredensial salah'}`);
+    alert(`Login Gagal: ${res.data?.pesan || res.data?.error || 'Periksa kredensial'}`);
     return;
   }
 
@@ -300,28 +335,23 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
 
   updateAuthUI();
   tutupModal('loginModal');
-  alert(`Selamat datang, ${currentUser.fullName}! Login berhasil dengan role: ${currentUser.role}.`);
+  alert(`Selamat datang, ${currentUser.fullName} (${currentUser.role})!`);
 });
 
-// 8. Logout
-document.getElementById('btnLogout').addEventListener('click', () => {
+document.getElementById('btnLogout')?.addEventListener('click', async () => {
+  if (currentToken) {
+    await apiRequest('/v2/auth/logout', { method: 'POST' });
+  }
   currentToken = null;
   currentUser = null;
   sessionStorage.removeItem('untad_token');
   sessionStorage.removeItem('untad_user');
   updateAuthUI();
-  alert('Anda telah keluar dari sesi.');
+  alert('Anda telah keluar dari sistem.');
 });
 
-// 9. Add Expense Form Submit
-document.getElementById('formExpense').addEventListener('submit', async (e) => {
+document.getElementById('formExpense')?.addEventListener('submit', async (e) => {
   e.preventDefault();
-  if (!currentToken) {
-    alert('Silakan login terlebih dahulu untuk mencatat pengeluaran riset.');
-    bukaModal('loginModal');
-    return;
-  }
-
   const payload = {
     activityId: Number(document.getElementById('expenseActivitySelect').value),
     title: document.getElementById('expenseTitle').value.trim(),
@@ -350,20 +380,25 @@ document.getElementById('formExpense').addEventListener('submit', async (e) => {
   loadSummaryWidgets();
 });
 
-// Tab Switching
-document.querySelectorAll('.tab-btn').forEach((btn) => {
+// Tab Switching (Supporting both .tab-button and .tab-btn)
+document.querySelectorAll('.tab-button, .tab-btn').forEach((btn) => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach((c) => c.classList.remove('active'));
+    document.querySelectorAll('.tab-button, .tab-btn').forEach((b) => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    document.querySelectorAll('.tab-panel, .tab-content').forEach((c) => c.classList.remove('active'));
+    
     btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
     const target = document.getElementById(btn.dataset.tab);
     if (target) target.classList.add('active');
   });
 });
 
 // Button Modal Triggers
-document.getElementById('btnLoginModal').addEventListener('click', () => bukaModal('loginModal'));
-document.getElementById('btnTambahExpenseModal').addEventListener('click', () => {
+document.getElementById('btnLoginModal')?.addEventListener('click', () => bukaModal('loginModal'));
+document.getElementById('btnTambahExpenseModal')?.addEventListener('click', () => {
   if (!currentToken) {
     alert('Harap login terlebih dahulu untuk menambahkan pengeluaran.');
     bukaModal('loginModal');
@@ -371,7 +406,7 @@ document.getElementById('btnTambahExpenseModal').addEventListener('click', () =>
     bukaModal('expenseModal');
   }
 });
-document.getElementById('btnTambahKegiatanModal').addEventListener('click', () => {
+document.getElementById('btnTambahKegiatanModal')?.addEventListener('click', () => {
   if (!currentUser || currentUser.role !== 'admin') {
     alert('Hanya role "admin" yang diizinkan menambah master kegiatan riset!');
     if (!currentUser) bukaModal('loginModal');
@@ -379,7 +414,7 @@ document.getElementById('btnTambahKegiatanModal').addEventListener('click', () =
     alert('Fitur tambah kegiatan tersedia via REST API POST /v2/activities.');
   }
 });
-document.getElementById('filterCategory').addEventListener('change', (e) => {
+document.getElementById('filterCategory')?.addEventListener('change', (e) => {
   loadExpenses(e.target.value);
 });
 
