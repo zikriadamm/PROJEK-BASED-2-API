@@ -380,6 +380,36 @@ document.getElementById('formExpense')?.addEventListener('submit', async (e) => 
   loadSummaryWidgets();
 });
 
+document.getElementById('formActivity')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const payload = {
+    title: document.getElementById('actTitle').value.trim(),
+    location: document.getElementById('actLocation').value.trim(),
+    budgetLimitIDR: Number(document.getElementById('actBudgetLimit').value),
+    unit: document.getElementById('actUnit').value.trim() || 'Fakultas Teknik Untad',
+    leadResearcher: document.getElementById('actLeadResearcher').value.trim() || (currentUser ? currentUser.fullName : 'Dosen Peneliti'),
+    latitude: Number(document.getElementById('actLat').value) || -0.836,
+    longitude: Number(document.getElementById('actLon').value) || 119.893,
+    description: document.getElementById('actDesc').value.trim()
+  };
+
+  const res = await apiRequest('/v2/activities', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) {
+    alert(`Gagal (${res.status}): ${res.data?.error || res.data?.pesan || 'Gagal menyimpan kegiatan'}`);
+    return;
+  }
+
+  alert(res.data.pesan || 'Kegiatan riset berhasil ditambahkan!');
+  tutupModal('activityModal');
+  document.getElementById('formActivity').reset();
+  loadActivities();
+  loadSummaryWidgets();
+});
+
 // Tab Switching (Supporting both .tab-button and .tab-btn)
 document.querySelectorAll('.tab-button, .tab-btn').forEach((btn) => {
   btn.addEventListener('click', () => {
@@ -407,12 +437,16 @@ document.getElementById('btnTambahExpenseModal')?.addEventListener('click', () =
   }
 });
 document.getElementById('btnTambahKegiatanModal')?.addEventListener('click', () => {
-  if (!currentUser || currentUser.role !== 'admin') {
-    alert('Hanya role "admin" yang diizinkan menambah master kegiatan riset!');
-    if (!currentUser) bukaModal('loginModal');
-  } else {
-    alert('Fitur tambah kegiatan tersedia via REST API POST /v2/activities.');
+  if (!currentToken) {
+    alert('Harap login terlebih dahulu sebagai "admin" untuk menambah kegiatan riset.');
+    bukaModal('loginModal');
+    return;
   }
+  if (!currentUser || currentUser.role !== 'admin') {
+    alert('Akses Ditolak: Hanya akun dengan role "admin" (Dosen/Keuangan) yang berwenang menambah kegiatan riset.');
+    return;
+  }
+  bukaModal('activityModal');
 });
 document.getElementById('filterCategory')?.addEventListener('change', (e) => {
   loadExpenses(e.target.value);

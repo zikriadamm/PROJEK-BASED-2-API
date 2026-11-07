@@ -414,6 +414,62 @@
     </div>
   </div>
 
+  <!-- MODAL: TAMBAH KEGIATAN (ROLE ADMIN) -->
+  <div class="modal-overlay hidden" id="activityModal" role="dialog" aria-modal="true" aria-labelledby="activityHeading">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="activityHeading">Tambah Kegiatan Riset Lapangan (Admin)</h3>
+        <button type="button" class="btn-close" onclick="tutupModal('activityModal')" aria-label="Tutup Modal">&times;</button>
+      </div>
+      <form id="formActivity" class="dialog-form">
+        <div class="form-group">
+          <label for="actTitle">Nama / Judul Kegiatan Riset</label>
+          <input type="text" id="actTitle" class="form-input" placeholder="Contoh: Pemetaan Geologi Bawah Laut Donggala" required>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="actLocation">Lokasi Posko / Wilayah</label>
+            <input type="text" id="actLocation" class="form-input" placeholder="Contoh: Donggala, Sulawesi Tengah" required>
+          </div>
+          <div class="form-group">
+            <label for="actBudgetLimit">Pagu Anggaran (IDR)</label>
+            <input type="number" id="actBudgetLimit" class="form-input" min="1000000" step="500000" placeholder="Contoh: 30000000" required>
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="actUnit">Unit / Jurusan</label>
+            <input type="text" id="actUnit" class="form-input" placeholder="Teknik Geologi FT Untad" value="Teknik Informatika FT Untad">
+          </div>
+          <div class="form-group">
+            <label for="actLeadResearcher">Ketua Peneliti</label>
+            <input type="text" id="actLeadResearcher" class="form-input" placeholder="Nama Dosen / Peneliti Utama">
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="actLat">Latitude Posko (Sensor Cuaca)</label>
+            <input type="number" id="actLat" class="form-input" step="any" placeholder="-0.67" value="-0.67">
+          </div>
+          <div class="form-group">
+            <label for="actLon">Longitude Posko (Sensor Cuaca)</label>
+            <input type="number" id="actLon" class="form-input" step="any" placeholder="119.74" value="119.74">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="actDesc">Deskripsi Ringkas Kegiatan</label>
+          <input type="text" id="actDesc" class="form-input" placeholder="Tujuan riset dan instalasi instrumen di lapangan">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="tutupModal('activityModal')">Batal</button>
+          <button type="submit" class="btn btn-primary">
+            <span>Simpan Kegiatan Riset</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-inner">
