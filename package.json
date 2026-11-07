@@ -5,6 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "test": "node test-suite.js",
+    "test:e2e": "node playwright-test.js",
     "client": "node client.js"
   },
   "keywords": [
@@ -22,5 +24,8 @@
   "license": "ISC",
   "dependencies": {
     "graphql": "^16.15.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.0"
   }
 }
