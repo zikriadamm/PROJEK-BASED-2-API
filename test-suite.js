@@ -1,11 +1,12 @@
-// Automated Test Suite for Untad Field Research Expense API
-const http = require('http');
+const { fork } = require('child_process');
 
+// Automated Test Suite for Untad Field Research Expense API
 const BASE_URL = 'http://localhost:3000';
 const API_KEY = 'untad-api-key-2026';
 
 let passed = 0;
 let failed = 0;
+let serverProcess = null;
 
 function assert(condition, message) {
   if (condition) {
@@ -37,13 +38,39 @@ async function req(endpoint, options = {}) {
   };
 }
 
+async function ensureServerRunning() {
+  try {
+    const res = await fetch(`${BASE_URL}/`, { method: 'HEAD' }).catch(() => null);
+    if (res) return; // Server already running
+  } catch (e) {
+    // ignore
+  }
+
+  console.log('🚀 Local server not detected. Spawning server.js for test run...');
+  serverProcess = fork('server.js', [], { stdio: 'ignore' });
+  // Wait up to 3 seconds for server to be ready
+  for (let i = 0; i < 30; i++) {
+    await new Promise((r) => setTimeout(r, 100));
+    try {
+      const ping = await fetch(`${BASE_URL}/`, { method: 'HEAD' }).catch(() => null);
+      if (ping) {
+        console.log('✅ Server ready on http://localhost:3000\n');
+        return;
+      }
+    } catch (e) {}
+  }
+}
+
 async function runTests() {
+  await ensureServerRunning();
+
   console.log('================================================================================');
   console.log('  RUNNING COMPLETE INTEGRATION TEST SUITE (SUB-CPMK 5 REKAYASA API)');
   console.log('================================================================================\n');
 
   let adminToken = '';
   let mhsToken = '';
+  let createdExpenseId = null;
 
   // TEST 1: Login Admin
   console.log('[TEST 1] POST /v2/auth/login (Admin Login)');
@@ -102,6 +129,7 @@ async function runTests() {
   assert(res4.status === 201, 'HTTP status is 201 Created');
   assert(res4.data.data.activityId === 2, 'Relates to activityId 2');
   assert(res4.data.data.cost.nominalIDR === 450000, 'Calculates cost object correctly');
+  createdExpenseId = res4.data.data.id;
 
   // TEST 5: GET /v1/expenses (Legacy with Sunset Header)
   console.log('\n[TEST 5] GET /v1/expenses (Legacy Sub-CPMK 4 with Sunset Header)');
@@ -167,10 +195,26 @@ async function runTests() {
   assert(res9.data.data && Array.isArray(res9.data.data.activities), 'GraphQL returns activities');
   assert(Array.isArray(res9.data.data.activities[0].expenses), 'Activities resolve nested expenses relation');
 
+  // Teardown: Clean up temporary test expense created in TEST 4 using Admin Token
+  if (createdExpenseId) {
+    const cleanRes = await req(`/v2/expenses/${createdExpenseId}`, {
+      method: 'DELETE',
+      headers: {
+        'x-api-key': API_KEY,
+        'Authorization': `Bearer ${adminToken}`
+      }
+    });
+    assert(cleanRes.status === 200, `Teardown: Temporary test expense #${createdExpenseId} cleanly removed`);
+  }
+
   // Summary
   console.log('\n================================================================================');
   console.log(`  TEST RESULTS: ${passed} PASSED | ${failed} FAILED`);
   console.log('================================================================================\n');
+
+  if (serverProcess) {
+    serverProcess.kill();
+  }
 
   if (failed > 0) {
     process.exit(1);
@@ -180,6 +224,7 @@ async function runTests() {
 }
 
 runTests().catch((err) => {
+  if (serverProcess) serverProcess.kill();
   console.error('Fatal test error:', err);
   process.exit(1);
 });

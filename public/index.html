@@ -3,202 +3,312 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Untad Field Research & Expense Management System</title>
+  <title>Untad Field Research & Expense Management System — Vanguard Tier</title>
+  <!-- High-End Agency Typography: Plus Jakarta Sans & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/public/style.css">
 </head>
-<body>
-  <!-- Header / Navigation Bar -->
-  <header class="navbar">
-    <div class="nav-container">
-      <div class="brand">
-        <div class="logo-shield">FT</div>
-        <div>
-          <h1>Untad Field Research Expense</h1>
-          <p class="subtitle">Fakultas Teknik Universitas Tadulako • Evaluasi Sub-CPMK 5</p>
+<body class="luxury-dark">
+  <!-- Ambient Atmospheric Glowing Orbs -->
+  <div class="ambient-mesh-top" aria-hidden="true"></div>
+  <div class="ambient-mesh-bottom" aria-hidden="true"></div>
+  <div class="noise-overlay" aria-hidden="true"></div>
+
+  <!-- Floating Island Navigation (Detached Glass Capsule) -->
+  <header class="island-nav-wrapper">
+    <nav class="island-nav">
+      <div class="nav-brand">
+        <div class="brand-capsule">
+          <span class="brand-monogram">FT</span>
+          <span class="brand-pulse-dot" title="Server Online"></span>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">UNTAD <span class="brand-accent">RESEARCH</span></span>
+          <span class="brand-badge">SUB-CPMK 5 • STANDAR INDUSTRI</span>
         </div>
       </div>
-      <div class="nav-actions">
-        <div class="user-badge" id="userBadge">
+
+      <div class="nav-cluster">
+        <div class="user-capsule" id="userBadge">
           <span class="status-indicator"></span>
-          <span id="userStatusText">Mode Tamu (Gunakan Login untuk Akses Penuh)</span>
+          <span id="userStatusText">Mode Tamu (Read-Only)</span>
         </div>
-        <button class="btn btn-outline" id="btnLoginModal">Masuk / Login</button>
-        <button class="btn btn-danger hidden" id="btnLogout">Keluar</button>
+        <button class="btn-island btn-island-primary" id="btnLoginModal">
+          <span>Masuk / Login</span>
+          <span class="icon-circle">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </button>
+        <button class="btn-island btn-island-danger hidden" id="btnLogout">
+          <span>Keluar</span>
+          <span class="icon-circle">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          </span>
+        </button>
       </div>
-    </div>
+    </nav>
   </header>
+
+  <!-- Hero Section with Spatial Rhythm -->
+  <section class="hero-stage">
+    <div class="eyebrow-pill">
+      <span class="sparkle-dot"></span>
+      <span>FAKULTAS TEKNIK UNIVERSITAS TADULAKO • SULAWESI TENGAH</span>
+    </div>
+    <h1 class="hero-title">
+      Sistem Manajemen Biaya & Logistik<br>
+      <span class="text-gradient">Ekspedisi Riset Lapangan</span>
+    </h1>
+    <p class="hero-subtitle">
+      Arsitektur backend HTTP murni terintegrasi Public API cuaca real-time kampus Untad, konversi valas live, dan GraphQL berstandar industri.
+    </p>
+  </section>
 
   <!-- Main Container -->
   <main class="main-container">
-    <!-- Public API Live Widgets Bar -->
+    <!-- Macro-Telemetry Widgets (Double-Bezel Architecture) -->
     <section class="live-widgets-grid">
       <!-- Widget 1: Open-Meteo Cuaca Posko Untad -->
-      <div class="widget-card weather-card">
-        <div class="widget-header">
-          <span class="widget-tag">Public API 1: Open-Meteo</span>
-          <span class="live-dot" title="Live Data Online"></span>
-        </div>
-        <div class="weather-body">
-          <div class="weather-temp" id="widgetWeatherTemp">--°C</div>
-          <div>
-            <div class="weather-condition" id="widgetWeatherCondition">Memuat cuaca kampus...</div>
-            <div class="weather-sub" id="widgetWeatherLocation">Kampus Untad Tondo, Palu (Sulteng)</div>
+      <div class="double-bezel weather-widget">
+        <div class="double-bezel-inner">
+          <div class="widget-topbar">
+            <span class="micro-badge badge-cyan">PUBLIC API 1: OPEN-METEO</span>
+            <div class="live-status-pill">
+              <span class="pulsing-green-dot"></span>
+              <span class="live-label">LIVE DATA</span>
+            </div>
+          </div>
+          <div class="weather-metrics">
+            <div class="telemetry-value" id="widgetWeatherTemp">--°C</div>
+            <div class="weather-meta">
+              <div class="weather-condition-text" id="widgetWeatherCondition">Memuat cuaca posko...</div>
+              <div class="weather-geo" id="widgetWeatherLocation">Kampus Untad Tondo, Palu (Sulteng)</div>
+            </div>
+          </div>
+          <div class="widget-bottom-meta" id="widgetWeatherWind">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+            <span>Kecepatan Angin: -- km/h</span>
           </div>
         </div>
-        <div class="widget-footer" id="widgetWeatherWind">Kecepatan Angin: -- km/h</div>
       </div>
 
       <!-- Widget 2: ExchangeRate-API Kurs Valas -->
-      <div class="widget-card rate-card">
-        <div class="widget-header">
-          <span class="widget-tag">Public API 2: ExchangeRate-API</span>
-          <span class="live-dot" title="Live Data Online"></span>
+      <div class="double-bezel rate-widget">
+        <div class="double-bezel-inner">
+          <div class="widget-topbar">
+            <span class="micro-badge badge-blue">PUBLIC API 2: EXCHANGERATE</span>
+            <div class="live-status-pill">
+              <span class="pulsing-green-dot"></span>
+              <span class="live-label">ONLINE</span>
+            </div>
+          </div>
+          <div class="rate-cluster">
+            <div class="rate-pill">
+              <span class="currency-tag">1 USD</span>
+              <span class="currency-val" id="rateUSD">≈ Rp 16.250</span>
+            </div>
+            <div class="rate-pill">
+              <span class="currency-tag">1 JPY</span>
+              <span class="currency-val" id="rateJPY">≈ Rp 108</span>
+            </div>
+            <div class="rate-pill">
+              <span class="currency-tag">1 EUR</span>
+              <span class="currency-val" id="rateEUR">≈ Rp 17.650</span>
+            </div>
+          </div>
+          <div class="widget-bottom-meta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M16 10H9.5a2.5 2.5 0 0 0 0 5H14a2.5 2.5 0 0 1 0 5H8"/></svg>
+            <span>Referensi Pagu Anggaran Riset Internasional</span>
+          </div>
         </div>
-        <div class="rate-body">
-          <div class="rate-item">
-            <span class="cur-code">1 USD</span>
-            <span class="cur-val" id="rateUSD">≈ Rp 16.250</span>
-          </div>
-          <div class="rate-item">
-            <span class="cur-code">1 JPY</span>
-            <span class="cur-val" id="rateJPY">≈ Rp 108</span>
-          </div>
-          <div class="rate-item">
-            <span class="cur-code">1 EUR</span>
-            <span class="cur-val" id="rateEUR">≈ Rp 17.650</span>
-          </div>
-        </div>
-        <div class="widget-footer">Referensi Resmi Anggaran Riset Internasional</div>
       </div>
 
       <!-- Widget 3: Ringkasan Anggaran Fakultas -->
-      <div class="widget-card budget-card">
-        <div class="widget-header">
-          <span class="widget-tag">Konsolidasi Anggaran Riset FT</span>
-          <span class="badge-status badge-safe" id="budgetRiskBadge">AMAN</span>
+      <div class="double-bezel budget-widget">
+        <div class="double-bezel-inner">
+          <div class="widget-topbar">
+            <span class="micro-badge badge-emerald">KONSOLIDASI PAGU FT UNTAD</span>
+            <span class="status-chip chip-safe" id="budgetRiskBadge">AMAN</span>
+          </div>
+          <div class="budget-values">
+            <div class="telemetry-value-lg" id="budgetTotalRealisasi">Rp 0</div>
+            <div class="budget-subcaption" id="budgetTotalPlafon">dari Total Pagu: Rp 0</div>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="budgetProgressBar" style="width: 0%;"></div>
+          </div>
+          <div class="widget-bottom-meta" id="budgetRemainingText">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            <span>Sisa Kuota: Rp 0 (0% Terserap)</span>
+          </div>
         </div>
-        <div class="budget-body">
-          <div class="budget-main" id="budgetTotalRealisasi">Rp 0</div>
-          <div class="budget-sub" id="budgetTotalPlafon">dari Total Pagu: Rp 0</div>
-        </div>
-        <div class="progress-bar-container">
-          <div class="progress-bar" id="budgetProgressBar" style="width: 0%;"></div>
-        </div>
-        <div class="widget-footer" id="budgetRemainingText">Sisa Kuota: Rp 0 (0% Terserap)</div>
       </div>
     </section>
 
-    <!-- Navigation Tabs -->
-    <nav class="tabs-nav">
-      <button class="tab-btn active" data-tab="tabActivities">Kegiatan Riset Lapangan (Untad)</button>
-      <button class="tab-btn" data-tab="tabExpenses">Rincian Pengeluaran Terelasi</button>
-      <button class="tab-btn" data-tab="tabSunset">Uji Versi /v1 vs /v2 (Header Sunset)</button>
-      <button class="tab-btn" data-tab="tabGraphQL">GraphQL Interactive Explorer</button>
-    </nav>
+    <!-- Floating Segmented Tab Controller -->
+    <div class="tab-control-stage">
+      <div class="segmented-control">
+        <button class="tab-btn active" data-tab="tabActivities">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Kegiatan Riset Untad</span>
+        </button>
+        <button class="tab-btn" data-tab="tabExpenses">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <span>Rincian Pengeluaran (/v2)</span>
+        </button>
+        <button class="tab-btn" data-tab="tabSunset">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+          <span>Evolusi /v1 Sunset</span>
+        </button>
+        <button class="tab-btn" data-tab="tabGraphQL">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          <span>GraphQL Explorer</span>
+        </button>
+      </div>
+    </div>
 
-    <!-- TAB 1: DAFTAR KEGIATAN RISET (ACTIVITIES) -->
+    <!-- TAB 1: ACTIVITIES -->
     <section class="tab-content active" id="tabActivities">
-      <div class="section-toolbar">
+      <div class="section-lead">
         <div>
-          <h2>Master Kegiatan Riset & Pengabdian FT Untad</h2>
-          <p class="section-desc">Resource utama berelasi (1 Kegiatan : Banyak Pengeluaran) berlatar lokasi Sulawesi Tengah.</p>
+          <span class="micro-eyebrow">RESOURCE BERELASI UTAMA (ONE-TO-MANY)</span>
+          <h2 class="section-title">Master Ekspedisi & Posko Riset FT Untad</h2>
+          <p class="section-subtitle">Daftar kegiatan riset aktif di wilayah Sulawesi Tengah (Sigi, Palu, Donggala) dan simposium internasional.</p>
         </div>
-        <button class="btn btn-primary" id="btnTambahKegiatanModal">+ Tambah Kegiatan (Admin)</button>
+        <button class="btn-island btn-island-secondary" id="btnTambahKegiatanModal">
+          <span>+ Tambah Kegiatan (Admin)</span>
+          <span class="icon-circle">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
+        </button>
       </div>
 
       <div class="activities-grid" id="activitiesGrid">
-        <div class="loading-state">Memuat data kegiatan riset...</div>
+        <div class="empty-loader">Memuat data kegiatan riset...</div>
       </div>
     </section>
 
-    <!-- TAB 2: RINCIAN PENGELUARAN (EXPENSES) -->
+    <!-- TAB 2: EXPENSES TABLE -->
     <section class="tab-content" id="tabExpenses">
-      <div class="section-toolbar">
+      <div class="section-lead">
         <div>
-          <h2>Daftar Pengeluaran Riset (REST API /v2/expenses)</h2>
-          <p class="section-desc">Mewajibkan relasi activityId, kalkulasi valas live ke IDR, dan catatan penginput.</p>
+          <span class="micro-eyebrow">STANDAR INDUSTRI REST API /v2</span>
+          <h2 class="section-title">Buku Besar Transaksi Pengeluaran Terelasi</h2>
+          <p class="section-subtitle">Mewajibkan relasi activityId, kalkulasi valas live, catatan pelapor, dan evaluasi pagu belanja.</p>
         </div>
-        <div class="toolbar-controls">
-          <select id="filterCategory" class="form-select">
-            <option value="">Semua Kategori</option>
-            <option value="transportasi">Transportasi</option>
-            <option value="akomodasi">Akomodasi</option>
-            <option value="konsumsi">Konsumsi</option>
-            <option value="belanja">Belanja / Logistik</option>
-            <option value="hiburan">Lainnya / Kegiatan</option>
-          </select>
-          <button class="btn btn-primary" id="btnTambahExpenseModal">+ Catat Pengeluaran</button>
+        <div class="action-cluster">
+          <div class="custom-select-wrapper">
+            <select id="filterCategory" class="luxury-select">
+              <option value="">Semua Kategori</option>
+              <option value="transportasi">Transportasi</option>
+              <option value="akomodasi">Akomodasi</option>
+              <option value="konsumsi">Konsumsi</option>
+              <option value="belanja">Belanja / Logistik</option>
+              <option value="hiburan">Lainnya / Kegiatan</option>
+            </select>
+          </div>
+          <button class="btn-island btn-island-primary" id="btnTambahExpenseModal">
+            <span>+ Catat Pengeluaran</span>
+            <span class="icon-circle">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            </span>
+          </button>
         </div>
       </div>
 
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Judul Pengeluaran</th>
-              <th>Kegiatan Riset</th>
-              <th>Kategori</th>
-              <th>Biaya Asli</th>
-              <th>Konversi IDR Live</th>
-              <th>Tanggal</th>
-              <th>Penginput</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="expensesTableBody">
-            <tr><td colspan="9" class="text-center">Memuat daftar pengeluaran...</td></tr>
-          </tbody>
-        </table>
+      <div class="double-bezel table-container-bezel">
+        <div class="double-bezel-inner table-inner">
+          <table class="luxury-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Aktivitas Belanja</th>
+                <th>Kegiatan Riset</th>
+                <th>Kategori</th>
+                <th>Nominal Asli</th>
+                <th>Konversi Live IDR</th>
+                <th>Tanggal</th>
+                <th>Pelapor</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="expensesTableBody">
+              <tr><td colspan="9" class="text-center">Memuat daftar transaksi pengeluaran...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
-    <!-- TAB 3: PENGUJIAN VERSI & HEADER SUNSET -->
+    <!-- TAB 3: SUNSET & VERSIONING DEMONSTRATION -->
     <section class="tab-content" id="tabSunset">
-      <div class="section-toolbar">
+      <div class="section-lead">
         <div>
-          <h2>Verifikasi Evolusi Versioning (/v1 vs /v2)</h2>
-          <p class="section-desc">Membuktikan kepatuhan Spesifikasi Wajib #5: Endpoint /v1 melayani GET dengan header HTTP Sunset.</p>
+          <span class="micro-eyebrow">KEPATUHAN SPESIFIKASI WAJIB #5</span>
+          <h2 class="section-title">Verifikasi Versioning & Header HTTP Sunset</h2>
+          <p class="section-subtitle">Membuktikan backward-compatibility format lama /v1 (Sub-CPMK 4) dengan header RFC 8594 Sunset.</p>
         </div>
       </div>
 
-      <div class="sunset-grid">
-        <div class="sunset-card">
-          <div class="card-header-bar">
-            <h3>REST /v1/expenses (Format Lama Sub-CPMK 4)</h3>
-            <span class="badge-status badge-warning">DEPRECATED</span>
+      <div class="sunset-duo-grid">
+        <!-- v1 Card -->
+        <div class="double-bezel">
+          <div class="double-bezel-inner console-inner">
+            <div class="console-header">
+              <div>
+                <span class="micro-badge badge-amber">REST /v1/expenses</span>
+                <span class="chip-deprecated">DEPRECATED</span>
+              </div>
+              <button class="btn-micro" id="btnTestV1">Eksekusi GET /v1</button>
+            </div>
+            <p class="console-desc">Membawa header <code>Sunset: Thu, 31 Dec 2026 23:59:59 GMT</code>. Mengembalikan format datar tanpa relasi.</p>
+            <div class="terminal-box" id="resBoxV1">Tekan tombol 'Eksekusi GET /v1' untuk melakukan pengujian...</div>
           </div>
-          <p>Membawa header <code>Sunset: Thu, 31 Dec 2026 23:59:59 GMT</code>. Mengembalikan format data flat tanpa relasi activityId.</p>
-          <button class="btn btn-secondary" id="btnTestV1">Panggil GET /v1/expenses</button>
-          <div class="response-box" id="resBoxV1">Klik tombol di atas untuk melakukan request live...</div>
         </div>
 
-        <div class="sunset-card">
-          <div class="card-header-bar">
-            <h3>REST /v2/expenses (Standar Industri Baru)</h3>
-            <span class="badge-status badge-success">ACTIVE & STABLE</span>
+        <!-- v2 Card -->
+        <div class="double-bezel">
+          <div class="double-bezel-inner console-inner">
+            <div class="console-header">
+              <div>
+                <span class="micro-badge badge-emerald">REST /v2/expenses</span>
+                <span class="chip-active">STANDAR INDUSTRI</span>
+              </div>
+              <button class="btn-micro btn-micro-primary" id="btnTestV2">Eksekusi GET /v2</button>
+            </div>
+            <p class="console-desc">Mewajibkan <code>activityId</code>, format biaya bersarang <code>cost</code>, dan evaluasi risiko pagu.</p>
+            <div class="terminal-box" id="resBoxV2">Tekan tombol 'Eksekusi GET /v2' untuk melakukan pengujian...</div>
           </div>
-          <p>Mewajibkan <code>activityId</code>, struktur keuangan bersarang <code>cost</code>, dan evaluasi realisasi anggaran.</p>
-          <button class="btn btn-secondary" id="btnTestV2">Panggil GET /v2/expenses</button>
-          <div class="response-box" id="resBoxV2">Klik tombol di atas untuk melakukan request live...</div>
         </div>
       </div>
     </section>
 
-    <!-- TAB 4: GRAPHQL EXPLORER -->
+    <!-- TAB 4: GRAPHQL INTERACTIVE WORKSPACE -->
     <section class="tab-content" id="tabGraphQL">
-      <div class="section-toolbar">
+      <div class="section-lead">
         <div>
-          <h2>GraphQL Endpoint (POST /graphql)</h2>
-          <p class="section-desc">Mendukung relasi data bersarang (nested activities & expenses), query berargumen, dan mutation.</p>
+          <span class="micro-eyebrow">GRAPHQL NATIVE ENGINE (POST /graphql)</span>
+          <h2 class="section-title">GraphQL Interactive Workspace</h2>
+          <p class="section-subtitle">Resolusi relasi bersarang dua arah (activities memuat nested expenses, dan sebaliknya) tanpa framework eksternal.</p>
         </div>
-        <button class="btn btn-primary" id="btnRunGraphQL">Jalankan Query (Ctrl+Enter)</button>
+        <button class="btn-island btn-island-primary" id="btnRunGraphQL">
+          <span>Jalankan Query</span>
+          <span class="icon-circle">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </span>
+        </button>
       </div>
 
-      <div class="gql-layout">
-        <div class="gql-editor-panel">
-          <div class="editor-header">GraphQL Query Input</div>
-          <textarea id="gqlQueryInput" class="gql-textarea" spellcheck="false">{
+      <div class="double-bezel gql-workbench-bezel">
+        <div class="double-bezel-inner gql-workbench">
+          <div class="gql-col">
+            <div class="workbench-bar">
+              <span class="workbench-label">QUERY INPUT (GRAPHQL)</span>
+              <span class="workbench-tag">POST /graphql</span>
+            </div>
+            <textarea id="gqlQueryInput" class="luxury-code-editor" spellcheck="false">{
   activities {
     id
     title
@@ -225,109 +335,148 @@
     }
   }
 }</textarea>
-        </div>
-        <div class="gql-result-panel">
-          <div class="editor-header">Response JSON</div>
-          <pre id="gqlResultOutput" class="gql-output">Tekan "Jalankan Query" untuk melihat hasil dari server native...</pre>
+          </div>
+          <div class="gql-col">
+            <div class="workbench-bar">
+              <span class="workbench-label">RESPONSE JSON BUFFER</span>
+              <span class="workbench-tag">HTTP 200 OK</span>
+            </div>
+            <pre id="gqlResultOutput" class="luxury-code-output">Tekan tombol 'Jalankan Query' untuk mengeksekusi di server native...</pre>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- MODAL: LOGIN -->
-  <div class="modal-overlay hidden" id="loginModal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>Login Sistem Riset FT Untad</h3>
-        <button class="close-btn" onclick="tutupModal('loginModal')">&times;</button>
+  <!-- MODAL: LOGIN (Double-Bezel Glass Card) -->
+  <div class="modal-backdrop hidden" id="loginModal">
+    <div class="double-bezel modal-bezel">
+      <div class="double-bezel-inner modal-inner">
+        <div class="modal-top">
+          <div>
+            <span class="micro-eyebrow">AUTENTIKASI SISTEM</span>
+            <h3 class="modal-heading">Masuk ke Portal Riset FT Untad</h3>
+          </div>
+          <button class="modal-close" onclick="tutupModal('loginModal')">&times;</button>
+        </div>
+        <form id="formLogin" class="luxury-form">
+          <div class="input-field">
+            <label>Username</label>
+            <input type="text" id="loginUsername" class="luxury-input" placeholder="admin atau mahasiswa" required>
+          </div>
+          <div class="input-field">
+            <label>Password</label>
+            <input type="password" id="loginPassword" class="luxury-input" placeholder="admin123 atau mhs123" required>
+          </div>
+          <div class="demo-credentials-box">
+            <div class="demo-title">Akun Pengujian Resmi:</div>
+            <div class="demo-row">
+              <span class="badge-role-admin">ADMIN</span>
+              <code>admin</code> / <code>admin123</code> (Wewenang CRUD Penuh)
+            </div>
+            <div class="demo-row">
+              <span class="badge-role-mhs">MAHASISWA</span>
+              <code>mahasiswa</code> / <code>mhs123</code> (Catat Biaya Saja)
+            </div>
+          </div>
+          <div class="modal-bottom-actions">
+            <button type="button" class="btn-text" onclick="tutupModal('loginModal')">Batal</button>
+            <button type="submit" class="btn-island btn-island-primary">
+              <span>Masuk & Terbitkan Token</span>
+              <span class="icon-circle">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
+            </button>
+          </div>
+        </form>
       </div>
-      <form id="formLogin" class="modal-form">
-        <div class="form-group">
-          <label>Username</label>
-          <input type="text" id="loginUsername" class="form-input" placeholder="admin atau mahasiswa" required>
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" id="loginPassword" class="form-input" placeholder="admin123 atau mhs123" required>
-        </div>
-        <div class="account-hints">
-          <p><strong>Akun Demo Tersedia:</strong></p>
-          <p>• Role Admin: <code>admin</code> / <code>admin123</code> (Hak CRUD penuh)</p>
-          <p>• Role Mahasiswa: <code>mahasiswa</code> / <code>mhs123</code> (Hanya catat pengeluaran)</p>
-        </div>
-        <div class="modal-actions">
-          <button type="button" class="btn btn-outline" onclick="tutupModal('loginModal')">Batal</button>
-          <button type="submit" class="btn btn-primary">Masuk & Dapatkan Token</button>
-        </div>
-      </form>
     </div>
   </div>
 
   <!-- MODAL: TAMBAH EXPENSE -->
-  <div class="modal-overlay hidden" id="expenseModal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>Catat Pengeluaran Riset Baru (/v2/expenses)</h3>
-        <button class="close-btn" onclick="tutupModal('expenseModal')">&times;</button>
+  <div class="modal-backdrop hidden" id="expenseModal">
+    <div class="double-bezel modal-bezel">
+      <div class="double-bezel-inner modal-inner">
+        <div class="modal-top">
+          <div>
+            <span class="micro-eyebrow">REST /v2/expenses</span>
+            <h3 class="modal-heading">Catat Transaksi Pengeluaran Baru</h3>
+          </div>
+          <button class="modal-close" onclick="tutupModal('expenseModal')">&times;</button>
+        </div>
+        <form id="formExpense" class="luxury-form">
+          <div class="input-field">
+            <label>Kegiatan Riset Lapangan (Wajib activityId)</label>
+            <select id="expenseActivitySelect" class="luxury-select" required></select>
+          </div>
+          <div class="input-field">
+            <label>Judul Transaksi Pengeluaran</label>
+            <input type="text" id="expenseTitle" class="luxury-input" placeholder="Contoh: Sewa Drone Geologi Sesar Sigi" required>
+          </div>
+          <div class="input-grid-2">
+            <div class="input-field">
+              <label>Kategori</label>
+              <select id="expenseCategory" class="luxury-select" required>
+                <option value="transportasi">Transportasi</option>
+                <option value="akomodasi">Akomodasi</option>
+                <option value="konsumsi">Konsumsi</option>
+                <option value="belanja">Belanja / Perlengkapan</option>
+                <option value="hiburan">Kegiatan / Seminar</option>
+                <option value="lainnya">Lainnya</option>
+              </select>
+            </div>
+            <div class="input-field">
+              <label>Mata Uang Asal</label>
+              <select id="expenseCurrency" class="luxury-select" required>
+                <option value="IDR">IDR (Rupiah Indonesia)</option>
+                <option value="USD">USD (US Dollar)</option>
+                <option value="JPY">JPY (Yen Jepang)</option>
+                <option value="EUR">EUR (Euro)</option>
+                <option value="SGD">SGD (Singapore Dollar)</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-grid-2">
+            <div class="input-field">
+              <label>Nominal Biaya</label>
+              <input type="number" id="expenseAmount" class="luxury-input" min="1" step="any" placeholder="Contoh: 1250000" required>
+            </div>
+            <div class="input-field">
+              <label>Tanggal Transaksi</label>
+              <input type="date" id="expenseDate" class="luxury-input" required>
+            </div>
+          </div>
+          <div class="input-field">
+            <label>Catatan Tambahan / Nomor Nota (Opsional)</label>
+            <input type="text" id="expenseNotes" class="luxury-input" placeholder="Rincian pos kegiatan atau lampiran bon belanja">
+          </div>
+          <div class="modal-bottom-actions">
+            <button type="button" class="btn-text" onclick="tutupModal('expenseModal')">Batal</button>
+            <button type="submit" class="btn-island btn-island-primary">
+              <span>Simpan ke Database</span>
+              <span class="icon-circle">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
+            </button>
+          </div>
+        </form>
       </div>
-      <form id="formExpense" class="modal-form">
-        <div class="form-group">
-          <label>Kegiatan Riset Lapangan (Wajib)</label>
-          <select id="expenseActivitySelect" class="form-select" required></select>
-        </div>
-        <div class="form-group">
-          <label>Judul Pengeluaran</label>
-          <input type="text" id="expenseTitle" class="form-input" placeholder="Contoh: Sewa Perahu Survei Pesisir" required>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Kategori</label>
-            <select id="expenseCategory" class="form-select" required>
-              <option value="transportasi">Transportasi</option>
-              <option value="akomodasi">Akomodasi</option>
-              <option value="konsumsi">Konsumsi</option>
-              <option value="belanja">Belanja / Perlengkapan</option>
-              <option value="hiburan">Kegiatan / Seminar</option>
-              <option value="lainnya">Lainnya</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Mata Uang</label>
-            <select id="expenseCurrency" class="form-select" required>
-              <option value="IDR">IDR (Rupiah)</option>
-              <option value="USD">USD (Dollar AS)</option>
-              <option value="JPY">JPY (Yen Jepang)</option>
-              <option value="EUR">EUR (Euro)</option>
-              <option value="SGD">SGD (Dollar Singapura)</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Nominal Pengeluaran</label>
-            <input type="number" id="expenseAmount" class="form-input" min="1" step="any" placeholder="Contoh: 1500000" required>
-          </div>
-          <div class="form-group">
-            <label>Tanggal</label>
-            <input type="date" id="expenseDate" class="form-input" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Catatan Tambahan (Opsional)</label>
-          <input type="text" id="expenseNotes" class="form-input" placeholder="Rincian pos kegiatan atau nomor nota">
-        </div>
-        <div class="modal-actions">
-          <button type="button" class="btn btn-outline" onclick="tutupModal('expenseModal')">Batal</button>
-          <button type="submit" class="btn btn-primary">Simpan Pengeluaran</button>
-        </div>
-      </form>
     </div>
   </div>
 
-  <footer class="footer">
-    <div class="footer-container">
-      <p>© 2026 Kelompok 3 - Rekayasa API (Kelas TIC) • Fakultas Teknik Universitas Tadulako</p>
-      <p class="footer-sub">Lidiya (F5512530118) • Tabita C. Theona (F5512520086) • M. Zikri Adam (F5512530117) • Trista S. Lambei (F5512530106)</p>
+  <!-- Editorial Footer -->
+  <footer class="editorial-footer">
+    <div class="footer-wrap">
+      <div class="footer-brand">
+        <span class="footer-logo">FT UNTAD</span>
+        <p>Sistem Backend & Antarmuka Rekayasa API • Program Studi S1 Teknik Informatika Untad</p>
+      </div>
+      <div class="footer-authors">
+        <span class="author-tag">Lidiya (F5512530118)</span>
+        <span class="author-tag">Tabita C. Theona (F5512520086)</span>
+        <span class="author-tag">M. Zikri Adam (F5512530117)</span>
+        <span class="author-tag">Trista S. Lambei (F5512530106)</span>
+      </div>
     </div>
   </footer>
 

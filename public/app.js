@@ -1,4 +1,4 @@
-// Client Web Dashboard Application
+// Client Web Dashboard Application - Vanguard Tier
 const API_KEY = 'untad-api-key-2026';
 let currentUser = null;
 let currentToken = sessionStorage.getItem('untad_token') || null;
@@ -47,12 +47,12 @@ function updateAuthUI() {
 
   if (currentUser) {
     indicator.classList.add('active');
-    statusText.innerHTML = `<strong>${currentUser.fullName}</strong> (${currentUser.role.toUpperCase()})`;
+    statusText.innerHTML = `<strong style="color:#ffffff;">${currentUser.fullName}</strong> (${currentUser.role.toUpperCase()})`;
     btnLogin.classList.add('hidden');
     btnLogout.classList.remove('hidden');
   } else {
     indicator.classList.remove('active');
-    statusText.textContent = 'Mode Tamu (Gunakan Login untuk Akses Penuh)';
+    statusText.textContent = 'Mode Tamu (Read-Only)';
     btnLogin.classList.remove('hidden');
     btnLogout.classList.add('hidden');
   }
@@ -70,8 +70,11 @@ async function loadSummaryWidgets() {
   // Weather Widget
   if (pub && pub.cuacaUntad) {
     document.getElementById('widgetWeatherTemp').textContent = pub.cuacaUntad.temperatureFormatted || '--°C';
-    document.getElementById('widgetWeatherCondition').textContent = pub.cuacaUntad.condition || 'Cerah';
-    document.getElementById('widgetWeatherWind').textContent = `Kecepatan Angin: ${pub.cuacaUntad.windSpeedFormatted || '--'} (${pub.cuacaUntad.status})`;
+    document.getElementById('widgetWeatherCondition').textContent = pub.cuacaUntad.condition || 'Cerah Berawan';
+    const windSpan = document.getElementById('widgetWeatherWind').querySelector('span');
+    if (windSpan) {
+      windSpan.textContent = `Kecepatan Angin: ${pub.cuacaUntad.windSpeedFormatted || '--'} (${pub.cuacaUntad.status})`;
+    }
   }
 
   // Currency Widget
@@ -88,11 +91,15 @@ async function loadSummaryWidgets() {
     document.getElementById('budgetTotalPlafon').textContent = `dari Total Pagu: ${fin.formatTotalPlafon}`;
     const pBar = document.getElementById('budgetProgressBar');
     pBar.style.width = fin.persentasePemakaian;
-    document.getElementById('budgetRemainingText').textContent = `Sisa Kuota: ${fin.formatSisaAnggaran} (${fin.persentasePemakaian} Terserap)`;
+
+    const remainingSpan = document.getElementById('budgetRemainingText').querySelector('span');
+    if (remainingSpan) {
+      remainingSpan.textContent = `Sisa Kuota: ${fin.formatSisaAnggaran} (${fin.persentasePemakaian} Terserap)`;
+    }
 
     const badge = document.getElementById('budgetRiskBadge');
     badge.textContent = fin.statusRisiko;
-    badge.className = 'badge-status ' + (fin.statusRisiko === 'AMAN' ? 'badge-safe' : (fin.statusRisiko === 'SEDANG' ? 'badge-warning' : 'badge-danger'));
+    badge.className = 'status-chip ' + (fin.statusRisiko === 'AMAN' ? 'chip-safe' : 'chip-deprecated');
   }
 }
 
@@ -103,7 +110,7 @@ async function loadActivities() {
   const res = await apiRequest('/v2/activities');
 
   if (!res.ok || !res.data) {
-    grid.innerHTML = '<div class="loading-state">Gagal memuat data kegiatan riset.</div>';
+    grid.innerHTML = '<div class="empty-loader">Gagal memuat data kegiatan riset.</div>';
     return;
   }
 
@@ -118,36 +125,42 @@ async function loadActivities() {
     opt.textContent = `[ID ${act.id}] ${act.title} (${act.location})`;
     selectAct.appendChild(opt);
 
-    // Card element
+    // Double-Bezel Card element
     const fin = act.financialSummary;
     const card = document.createElement('div');
-    card.className = 'activity-card';
+    card.className = 'double-bezel activity-bezel';
     card.innerHTML = `
-      <div>
-        <div class="activity-header">
-          <span class="activity-title">${act.title}</span>
-          <span class="badge-status ${fin.statusRisiko === 'AMAN' ? 'badge-safe' : 'badge-warning'}">${fin.statusRisiko}</span>
+      <div class="double-bezel-inner activity-inner">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:0.5rem;">
+            <h3 class="activity-card-title">${act.title}</h3>
+            <span class="status-chip ${fin.statusRisiko === 'AMAN' ? 'chip-safe' : 'chip-deprecated'}">${fin.statusRisiko}</span>
+          </div>
+          <div class="activity-card-geo">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>${act.location}</span>
+          </div>
+          <div class="weather-badge-pill">
+            <span>☁️ Cuaca Posko:</span>
+            <strong style="color:#ffffff;">${act.currentWeather ? `${act.currentWeather.condition} (${act.currentWeather.temperatureFormatted})` : 'Normal'}</strong>
+          </div>
+          <p class="activity-desc">${act.description || ''}</p>
+          <div class="activity-meta-row">
+            <span>👤 Ketua: <strong style="color:#ffffff;">${act.leadResearcher}</strong> | 🏢 ${act.unit}</span>
+          </div>
         </div>
-        <div class="activity-location">📍 ${act.location}</div>
-        <div class="activity-weather-badge">
-          ☁️ Cuaca Posko: ${act.currentWeather ? `${act.currentWeather.condition} (${act.currentWeather.temperatureFormatted})` : 'Normal'}
-        </div>
-        <p style="font-size:0.85rem; color:#475569; margin-bottom:0.75rem;">${act.description || ''}</p>
-        <div style="font-size:0.8rem; color:#64748b; margin-bottom:0.5rem;">
-          👤 Ketua: <strong>${act.leadResearcher}</strong> | 🏢 ${act.unit}
-        </div>
-      </div>
-      <div>
-        <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700; margin-bottom:0.25rem;">
-          <span>Realisasi: ${fin.formatRealisasi}</span>
-          <span>Plafon: ${fin.formatPlafon}</span>
-        </div>
-        <div class="progress-bar-container">
-          <div class="progress-bar" style="width: ${fin.usagePercentage};"></div>
-        </div>
-        <div style="font-size:0.75rem; color:#64748b; display:flex; justify-content:space-between; margin-top:0.35rem;">
-          <span>${fin.jumlahPengeluaran} Transaksi Tercatat</span>
-          <span>Sisa: ${fin.formatSisaAnggaran}</span>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700; margin-bottom:0.25rem;">
+            <span style="color:#94a3b8;">Realisasi: <strong style="color:#38bdf8;">${fin.formatRealisasi}</strong></span>
+            <span style="color:#64748b;">Plafon: ${fin.formatPlafon}</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width: ${fin.usagePercentage};"></div>
+          </div>
+          <div style="font-size:0.75rem; color:#64748b; display:flex; justify-content:space-between; margin-top:0.4rem;">
+            <span>${fin.jumlahPengeluaran} Transaksi Tercatat</span>
+            <span>Sisa: <strong style="color:#10b981;">${fin.formatSisaAnggaran}</strong></span>
+          </div>
         </div>
       </div>
     `;
@@ -163,13 +176,13 @@ async function loadExpenses(categoryFilter = '') {
 
   const res = await apiRequest(url);
   if (!res.ok || !res.data) {
-    tbody.innerHTML = '<tr><td colspan="9" class="text-center">Gagal memuat pengeluaran.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" class="text-center" style="padding:2rem;">Gagal memuat pengeluaran.</td></tr>';
     return;
   }
 
   const items = res.data.data;
   if (!items || items.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" class="text-center">Belum ada catatan pengeluaran tersimpan.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" class="text-center" style="padding:2rem;">Belum ada catatan transaksi tersimpan.</td></tr>';
     return;
   }
 
@@ -177,16 +190,25 @@ async function loadExpenses(categoryFilter = '') {
   items.forEach((item) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><strong>#${item.id}</strong></td>
-      <td><strong>${item.title}</strong><br><small style="color:#64748b;">${item.notes || '-'}</small></td>
-      <td><span style="color:#1e40af; font-weight:600;">${item.activity.title}</span><br><small>📍 ${item.activity.location}</small></td>
-      <td><span class="badge-status badge-warning">${item.category}</span></td>
-      <td>${item.cost.amount.toLocaleString('id-ID')} ${item.cost.currency}</td>
-      <td><strong style="color:#059669;">${item.cost.formatRupiah}</strong><br><small style="color:#64748b;">${item.cost.kursPerSatuan}</small></td>
-      <td>${item.date}</td>
-      <td><small>${item.submittedBy}</small></td>
+      <td><span class="id-tag">#${item.id}</span></td>
       <td>
-        <button class="btn btn-danger" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="hapusExpense(${item.id})">Hapus</button>
+        <strong style="color:#ffffff; font-size:0.875rem;">${item.title}</strong>
+        ${item.notes ? `<div style="font-size:0.75rem; color:#64748b; margin-top:0.15rem;">${item.notes}</div>` : ''}
+      </td>
+      <td>
+        <span style="color:#38bdf8; font-weight:600; font-size:0.825rem;">${item.activity.title}</span>
+        <div style="font-size:0.75rem; color:#64748b;">📍 ${item.activity.location}</div>
+      </td>
+      <td><span class="category-chip">${item.category}</span></td>
+      <td><span class="amount-raw">${item.cost.amount.toLocaleString('id-ID')} ${item.cost.currency}</span></td>
+      <td>
+        <div class="amount-idr">${item.cost.formatRupiah}</div>
+        <div style="font-size:0.725rem; color:#64748b;">${item.cost.kursPerSatuan}</div>
+      </td>
+      <td style="font-family:var(--font-mono); font-size:0.8rem; color:#94a3b8;">${item.date}</td>
+      <td style="font-size:0.75rem; color:#94a3b8;">${item.submittedBy}</td>
+      <td>
+        <button class="btn-micro" style="color:#fda4af; border-color:rgba(244,63,94,0.3);" onclick="hapusExpense(${item.id})">Hapus</button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -195,11 +217,11 @@ async function loadExpenses(categoryFilter = '') {
 
 // 4. Delete Expense Handler
 async function hapusExpense(id) {
-  if (!confirm(`Apakah Anda yakin ingin menghapus pengeluaran ID ${id}?`)) return;
+  if (!confirm(`Apakah Anda yakin ingin menghapus pengeluaran ID #${id}?`)) return;
 
   const res = await apiRequest(`/v2/expenses/${id}`, { method: 'DELETE' });
   if (res.status === 401) {
-    alert('401 Unauthorized: Anda belum login! Silakan login terlebih dahulu.');
+    alert('401 Unauthorized: Anda belum terautentikasi! Silakan login terlebih dahulu.');
     bukaModal('loginModal');
     return;
   }
@@ -245,7 +267,7 @@ document.getElementById('btnTestV2').addEventListener('click', async () => {
 document.getElementById('btnRunGraphQL').addEventListener('click', async () => {
   const query = document.getElementById('gqlQueryInput').value;
   const outBox = document.getElementById('gqlResultOutput');
-  outBox.textContent = 'Mengeksekusi query di server native...';
+  outBox.textContent = 'Mengeksekusi query di server native HTTP...';
 
   const res = await apiRequest('/graphql', {
     method: 'POST',
@@ -369,7 +391,6 @@ window.addEventListener('DOMContentLoaded', () => {
     updateAuthUI();
   }
 
-  // Set default date picker to today
   const today = new Date().toISOString().split('T')[0];
   const dateInput = document.getElementById('expenseDate');
   if (dateInput) dateInput.value = today;
