@@ -142,8 +142,9 @@ async function runPlaywrightSuite() {
     assert(activitiesCount >= 4, `Activity card successfully created! Total cards: ${activitiesCount}`);
 
     // Take screenshot of working result
-    await page.screenshot({ path: 'playwright-test-result.png', fullPage: true });
-    console.log('📸 Full-page verification screenshot saved to: playwright-test-result.png');
+    const screenshotPath = 'laporan-dan-arsip/screenshot-verifikasi/playwright-test-result.png';
+    await page.screenshot({ path: screenshotPath, fullPage: true });
+    console.log(`📸 Full-page verification screenshot saved to: ${screenshotPath}`);
 
     // 6. Cleanup created test activity to keep data seeded
     const activitiesRaw = JSON.parse(fs.readFileSync('./data/activities.json', 'utf8'));

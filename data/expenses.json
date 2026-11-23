@@ -97,5 +97,16 @@
     "date": "2026-11-05",
     "notes": "Pembelian kabel kedap air",
     "submittedBy": "Muhammad Zikri Adam (F5512530117)"
+  },
+  {
+    "id": 10,
+    "activityId": 1,
+    "title": "Bahan bakar motor",
+    "category": "transportasi",
+    "amount": 3,
+    "currency": "USD",
+    "date": "2026-11-08",
+    "notes": "Bahan bakar motor",
+    "submittedBy": "Ir. Tabita C. Theona, M.T. (198504122010122003)"
   }
 ]

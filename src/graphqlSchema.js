@@ -2,6 +2,7 @@ const { buildSchema, graphql } = require('graphql');
 const storage = require('./storage');
 const publicApis = require('./publicApis');
 const security = require('./security');
+const { validasiExpenseV2 } = require('./v2Router');
 
 const schemaString = `
   type Cost {
@@ -169,7 +170,18 @@ const rootResolvers = {
     const activities = await storage.getActivities();
     const liveRates = await publicApis.getLiveRates();
     const actMap = {};
-    activities.forEach((a) => { actMap[a.id] = a; });
+    const spentByActivity = {};
+    activities.forEach((a) => {
+      actMap[a.id] = a;
+      spentByActivity[a.id] = 0;
+    });
+
+    expenses.forEach((e) => {
+      const conv = publicApis.konversiKeIDR(e.amount, e.currency, liveRates.rates);
+      if (spentByActivity[e.activityId] !== undefined) {
+        spentByActivity[e.activityId] += conv.nominalIDR;
+      }
+    });
 
     let filtered = expenses;
     if (activityId) {
@@ -182,6 +194,24 @@ const rootResolvers = {
     return filtered.map((e) => {
       const conv = publicApis.konversiKeIDR(e.amount, e.currency, liveRates.rates);
       const parent = actMap[e.activityId];
+      let parentFinancialSummary = null;
+      if (parent) {
+        const totalSpent = spentByActivity[parent.id] || 0;
+        const remaining = parent.budgetLimitIDR - totalSpent;
+        const usagePct = parent.budgetLimitIDR > 0
+          ? Number(((totalSpent / parent.budgetLimitIDR) * 100).toFixed(2))
+          : 0;
+        parentFinancialSummary = {
+          budgetLimitIDR: parent.budgetLimitIDR,
+          totalSpentIDR: totalSpent,
+          remainingBudgetIDR: remaining,
+          formatPlafon: 'Rp ' + parent.budgetLimitIDR.toLocaleString('id-ID'),
+          formatRealisasi: 'Rp ' + totalSpent.toLocaleString('id-ID'),
+          formatSisaAnggaran: 'Rp ' + remaining.toLocaleString('id-ID'),
+          usagePercentage: `${usagePct}%`,
+          statusRisiko: totalSpent > parent.budgetLimitIDR ? 'OVER_BUDGET' : (usagePct >= 80 ? 'WASPADA' : 'AMAN')
+        };
+      }
       return {
         id: String(e.id),
         activityId: String(e.activityId),
@@ -208,16 +238,7 @@ const rootResolvers = {
           endDate: parent.endDate,
           status: parent.status || 'ACTIVE',
           description: parent.description || '',
-          financialSummary: {
-            budgetLimitIDR: parent.budgetLimitIDR,
-            totalSpentIDR: 0,
-            remainingBudgetIDR: parent.budgetLimitIDR,
-            formatPlafon: 'Rp ' + parent.budgetLimitIDR.toLocaleString('id-ID'),
-            formatRealisasi: 'Rp 0',
-            formatSisaAnggaran: 'Rp ' + parent.budgetLimitIDR.toLocaleString('id-ID'),
-            usagePercentage: '0%',
-            statusRisiko: 'AMAN'
-          },
+          financialSummary: parentFinancialSummary,
           currentWeather: null,
           expenses: []
         } : null
@@ -265,12 +286,10 @@ const rootResolvers = {
       throw new Error(`404: Kegiatan riset dengan activityId ${input.activityId} tidak ditemukan.`);
     }
 
-    // 3. Validasi Aturan Bisnis Input
-    if (!input.title || input.title.trim() === '') {
-      throw new Error('400: Field "title" pengeluaran wajib diisi.');
-    }
-    if (!input.amount || input.amount <= 0) {
-      throw new Error('400: Field "amount" harus berupa angka lebih besar dari 0.');
+    // 3. Validasi Aturan Bisnis Input (disamakan dengan REST v2)
+    const validationErr = validasiExpenseV2(input, false);
+    if (validationErr) {
+      throw new Error(`400: ${validationErr}`);
     }
 
     const expenses = await storage.getExpenses();

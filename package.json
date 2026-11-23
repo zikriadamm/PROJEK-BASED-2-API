@@ -20,7 +20,7 @@
     "bruno",
     "postman"
   ],
-  "author": "Kelompok 3 (Lidiya, Tabita Creaselia Belicia Theona, Muhammad Zikri Adam, Trista Sheryl Lambei)",
+  "author": "Kelompok 2 (Lidiya, Tabita Creaselia Belicia Theona, Muhammad Zikri Adam, Trista Sheryl Lambei)",
   "license": "ISC",
   "dependencies": {
     "graphql": "^16.15.0"

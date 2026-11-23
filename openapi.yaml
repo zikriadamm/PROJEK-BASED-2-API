@@ -9,7 +9,7 @@ info:
     (ExchangeRate-API & Open-Meteo), serta pengelolaan versi (/v1 dan /v2) dengan header Sunset.
   version: 2.0.0
   contact:
-    name: Kelompok 3 - Rekayasa API (Kelas TIC)
+    name: Kelompok 2 - Rekayasa API (Kelas TIC)
     email: rekayasa.api.kel3@untad.ac.id
 servers:
   - url: http://localhost:3000

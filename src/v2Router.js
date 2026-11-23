@@ -127,6 +127,14 @@ async function handleV2Router(req, res, pathname, method, query) {
     });
   }
 
+  // 1b. ENDPOINT: POST /v2/auth/logout
+  if (pathname === '/v2/auth/logout' && method === 'POST') {
+    return kirimJSON(res, 200, {
+      sukses: true,
+      pesan: 'Logout berhasil. Sesi token klien telah diakhiri.'
+    });
+  }
+
   // 2. RESOURCE: ACTIVITIES (/v2/activities & /v2/activities/:id)
   if (pathname === '/v2/activities' || pathname === '/v2/activities/') {
     // --- GET /v2/activities ---
@@ -424,6 +432,8 @@ async function handleV2Router(req, res, pathname, method, query) {
           sumber: 'ExchangeRate-API (open.er-api.com)',
           status: liveRates.status,
           kursIDRperUSD: liveRates.rates['IDR'],
+          kursIDRperJPY: publicApis.konversiKeIDR(1, 'JPY', liveRates.rates).kursPerSatuanIDR,
+          kursIDRperEUR: publicApis.konversiKeIDR(1, 'EUR', liveRates.rates).kursPerSatuanIDR,
           terakhirDiperbarui: liveRates.terakhirDiperbarui
         },
         cuacaUntad: weatherUntad
@@ -668,5 +678,6 @@ async function handleV2Router(req, res, pathname, method, query) {
 }
 
 module.exports = {
-  handleV2Router
+  handleV2Router,
+  validasiExpenseV2
 };

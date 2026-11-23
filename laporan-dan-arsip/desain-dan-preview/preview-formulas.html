@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview Desain Untad Research — Formulasi 1 vs Formulasi 2</title>
+  <!-- Typography: Sora & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* THEME 1: ETHEREAL LIGHT UNTAD (Payno Light Aesthetic) */
+    body.theme-light {
+      --bg-page: #EEF2F6;
+      --bg-dashboard: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --bg-card-subtle: #F1F5F9;
+      --border-card: rgba(0, 0, 0, 0.06);
+      --border-subtle: rgba(0, 0, 0, 0.04);
+      --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+      --shadow-float: 0 20px 40px -10px rgba(15, 23, 42, 0.08);
+
+      --color-primary: #DC2626; /* Merah Tadulako */
+      --color-primary-hover: #B91C1C;
+      --color-primary-subtle: rgba(220, 38, 38, 0.08);
+      --color-gold: #D97706; /* Emas Untad */
+      --color-gold-subtle: rgba(217, 119, 6, 0.12);
+      --color-safe: #059669;
+
+      --text-main: #0F172A;
+      --text-sub: #475569;
+      --text-muted: #64748B;
+      --text-white: #FFFFFF;
+
+      --ambient-glow: radial-gradient(circle at 50% 0%, rgba(220, 38, 38, 0.10) 0%, rgba(245, 158, 11, 0.08) 35%, transparent 70%);
+      --dock-bg: #FFFFFF;
+    }
+
+    /* THEME 2: OBSIDIAN DARK UNTAD (Payno Dark Aesthetic) */
+    body.theme-dark {
+      --bg-page: #060911;
+      --bg-dashboard: #0B0F19;
+      --bg-card: #111827;
+      --bg-card-subtle: #1E293B;
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-subtle: rgba(255, 255, 255, 0.05);
+      --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.6), 0 2px 6px -1px rgba(0, 0, 0, 0.4);
+      --shadow-float: 0 20px 40px -10px rgba(0, 0, 0, 0.8);
+
+      --color-primary: #E11D48; /* Crimson Glow */
+      --color-primary-hover: #BE123C;
+      --color-primary-subtle: rgba(225, 29, 72, 0.15);
+      --color-gold: #F59E0B; /* Emas Glow */
+      --color-gold-subtle: rgba(245, 158, 11, 0.15);
+      --color-safe: #10B981;
+
+      --text-main: #F8FAFC;
+      --text-sub: #CBD5E1;
+      --text-muted: #94A3B8;
+      --text-white: #FFFFFF;
+
+      --ambient-glow: radial-gradient(circle at 50% 0%, rgba(225, 29, 72, 0.20) 0%, rgba(245, 158, 11, 0.12) 40%, transparent 75%);
+      --dock-bg: #111827;
+    }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      padding: 1.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Top Mode Controller Switcher */
+    .preview-switcher-bar {
+      position: sticky;
+      top: 1rem;
+      z-index: 100;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      padding: 0.4rem;
+      border-radius: 9999px;
+      display: inline-flex;
+      gap: 0.5rem;
+      box-shadow: var(--shadow-float);
+      margin-bottom: 1.5rem;
+    }
+
+    .switch-btn {
+      font-family: 'Sora', sans-serif;
+      font-size: 0.825rem;
+      font-weight: 700;
+      padding: 0.55rem 1.25rem;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.25s ease;
+    }
+
+    .switch-btn.active {
+      background: var(--color-primary);
+      color: var(--text-white);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+    }
+
+    /* Main Floating Dashboard Shell (Replicating Payno Window) */
+    .dashboard-window {
+      width: 100%;
+      max-width: 1360px;
+      background-color: var(--bg-dashboard);
+      border-radius: 28px;
+      border: 1px solid var(--border-card);
+      box-shadow: var(--shadow-float);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .ambient-header-glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 280px;
+      background: var(--ambient-glow);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Left Floating Side Dock */
+    .side-dock {
+      width: 90px;
+      padding: 1.5rem 0.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      border-right: 1px solid var(--border-subtle);
+      position: relative;
+      z-index: 10;
+      background: var(--dock-bg);
+    }
+
+    .dock-logo-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.2);
+    }
+
+    .dock-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .dock-icons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    .dock-btn {
+      width: 100%;
+      height: 52px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 4px 2px;
+    }
+
+    .dock-btn.active {
+      background: var(--color-primary-subtle);
+      color: var(--color-primary);
+      border-color: rgba(220, 38, 38, 0.2);
+    }
+
+    .dock-btn:hover:not(.active) {
+      background: var(--bg-card-subtle);
+      color: var(--text-main);
+    }
+
+    .dock-label {
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+
+    /* Dashboard Workspace Canvas */
+    .dashboard-workspace {
+      flex: 1;
+      padding: 1.75rem 2.25rem 2.25rem 2.25rem;
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Top Header Bar */
+    .workspace-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-logo-img {
+      width: 38px;
+      height: 38px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 6px rgba(220, 38, 38, 0.25));
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      line-height: 1.15;
+    }
+
+    .brand-title span {
+      color: var(--color-primary);
+    }
+
+    .brand-tagline {
+      font-size: 0.725rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .circle-icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-card);
+    }
+
+    .user-profile-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      padding: 0.35rem 0.85rem 0.35rem 0.45rem;
+      border-radius: 9999px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .user-avatar-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--color-gold);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-profile-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .user-profile-role {
+      font-size: 0.7rem;
+      color: var(--color-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+
+    /* 3-Column Bento Layout (Exact Payno Geometry) */
+    .bento-grid-3col {
+      display: grid;
+      grid-template-columns: 330px 1fr 330px;
+      gap: 1.5rem;
+    }
+
+    /* COLUMN 1 */
+    .col-balance-transactions {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .card-balance {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 1.4rem;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      position: relative;
+    }
+
+    .balance-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-size: 0.775rem;
+      font-weight: 600;
+    }
+
+    .balance-arrow-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: #FFFFFF;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .balance-amount {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .balance-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.725rem;
+      font-weight: 600;
+      color: var(--color-safe);
+      background: rgba(16, 185, 129, 0.1);
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      width: fit-content;
+    }
+
+    /* Quick Action 4-Icon Row */
+    .quick-actions-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      text-align: center;
+    }
+
+    .action-circle-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .action-circle-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .action-circle-btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .action-circle-btn.highlight {
+      background: var(--color-primary);
+      color: #FFFFFF;
+      border-color: transparent;
+    }
+
+    .action-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Recent Transactions Card */
+    .card-transactions {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 1.35rem;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .card-title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-heading-sm {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .link-view-all {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    .transaction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .transaction-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+    }
+
+    .tx-left {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .tx-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-shrink: 0;
+    }
+
+    .tx-title {
+      font-size: 0.775rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
+    }
+
+    .tx-time {
+      font-size: 0.675rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
+    }
+
+    .tx-amount {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.775rem;
+      font-weight: 700;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    .tx-amount.neg {
+      color: var(--color-primary);
+    }
+
+    /* COLUMN 2 */
+    .col-analytics-posko {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Dual Telemetry Stat Cards */
+    .dual-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .stat-metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 1.2rem;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .stat-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .pill-badge-sm {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 9999px;
+    }
+
+    .pill-cyan {
+      background: rgba(56, 189, 248, 0.12);
+      color: #0284c7;
+    }
+
+    .pill-gold {
+      background: var(--color-gold-subtle);
+      color: var(--color-gold);
+    }
+
+    .stat-big-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-sub-text {
+      font-size: 0.725rem;
+      color: var(--text-muted);
+    }
+
+    /* Micro Chart Earning Activity */
+    .card-chart {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 1.35rem;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .chart-metric-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .chart-val-big {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .chart-bars-wrap {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-end;
+      height: 60px;
+      padding-top: 0.5rem;
+    }
+
+    .bar-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .bar-pill {
+      width: 14px;
+      border-radius: 9999px;
+      background: var(--bg-card-subtle);
+    }
+
+    .bar-pill.active {
+      background: var(--color-primary);
+    }
+
+    .bar-day {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Upcoming Posko / Activities */
+    .card-posko {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 1.35rem;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .posko-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .posko-item:last-child {
+      border-bottom: none;
+    }
+
+    .posko-left {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .posko-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--bg-card-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+    }
+
+    .posko-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .posko-loc {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .posko-budget {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .posko-status {
+      font-size: 0.65rem;
+      color: var(--color-safe);
+      font-weight: 600;
+    }
+
+    /* COLUMN 3: FAST ACTION & RESEARCHER PASS */
+    .col-fast-action-card {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .card-send-money {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 1.35rem;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .target-profile-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0.85rem;
+      border-radius: 14px;
+      background: var(--bg-card-subtle);
+    }
+
+    .target-info {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .target-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    .target-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .target-sub {
+      font-size: 0.675rem;
+      color: var(--text-muted);
+    }
+
+    .change-link {
+      font-size: 0.725rem;
+      color: var(--color-primary);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .amount-input-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .amount-input-label {
+      font-size: 0.725rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .amount-input-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .amount-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .currency-selector-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.3rem 0.65rem;
+      border-radius: 8px;
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+    }
+
+    .delivery-eta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 0.65rem;
+    }
+
+    .btn-cta-continue {
+      font-family: 'Sora', sans-serif;
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 14px;
+      background: var(--color-primary);
+      color: #FFFFFF;
+      border: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);
+      transition: background 0.2s ease;
+    }
+
+    .btn-cta-continue:hover {
+      background: var(--color-primary-hover);
+    }
+
+    /* FAST ACTION EXPENSE CARD (Kolom 3) */
+    .card-send-money {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 1.4rem;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+    }
+
+    .expense-cat-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .expense-cat-chips {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .cat-chip {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .cat-chip.active {
+      background: var(--color-primary-subtle);
+      border-color: rgba(220, 38, 38, 0.3);
+      color: var(--color-primary);
+      font-weight: 700;
+    }
+
+    .note-input-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .note-input-preview {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.775rem;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body class="theme-light" id="previewBody">
+
+  <!-- Interactive Mode Toggle (User Can Switch Formulations in 1 Click) -->
+  <div class="preview-switcher-bar">
+    <button type="button" class="switch-btn active" id="btnLightMode" onclick="setTheme('light')">
+      <span>☀️ Formulasi 1: Ethereal Light Untad</span>
+    </button>
+    <button type="button" class="switch-btn" id="btnDarkMode" onclick="setTheme('dark')">
+      <span>🌙 Formulasi 2: Obsidian Dark Untad</span>
+    </button>
+  </div>
+
+  <!-- Main Floating Dashboard Canvas -->
+  <main class="dashboard-window">
+    <div class="ambient-header-glow" aria-hidden="true"></div>
+
+    <!-- Left Floating Dock -->
+    <aside class="side-dock">
+      <div class="dock-logo-wrap" title="Universitas Tadulako">
+        <img src="logo-untad.png" alt="Logo Universitas Tadulako" class="dock-logo-img">
+      </div>
+
+      <nav class="dock-icons" aria-label="Navigasi Ikon">
+        <button type="button" class="dock-btn active" title="Dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span class="dock-label">Dashboard</span>
+        </button>
+        <button type="button" class="dock-btn" title="Buku Pengeluaran">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <span class="dock-label">Biaya v2</span>
+        </button>
+        <button type="button" class="dock-btn" title="Kegiatan Riset">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span class="dock-label">Posko</span>
+        </button>
+        <button type="button" class="dock-btn" title="Audit Sunset v1">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+          <span class="dock-label">Sunset v1</span>
+        </button>
+        <button type="button" class="dock-btn" title="GraphQL Explorer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          <span class="dock-label">GraphQL</span>
+        </button>
+      </nav>
+
+      <button type="button" class="dock-btn" title="Keluar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <span class="dock-label">Keluar</span>
+      </button>
+    </aside>
+
+    <!-- Workspace -->
+    <div class="dashboard-workspace">
+      <!-- Topbar -->
+      <header class="workspace-topbar">
+        <div class="brand-title-wrap">
+          <img src="logo-untad.png" alt="Logo Universitas Tadulako" class="brand-logo-img">
+          <div>
+            <h1 class="brand-title">untad <span>research</span></h1>
+            <span class="brand-tagline">Fakultas Teknik Universitas Tadulako</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="user-profile-pill">
+            <div class="user-avatar-circle">LT</div>
+            <div>
+              <div class="user-profile-name">Ir. Tabita C. Theona</div>
+              <div class="user-profile-role">ADMINISTRATOR</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- 3-Column Bento Grid -->
+      <div class="bento-grid-3col">
+        <!-- COLUMN 1: SISA KUOTA & TRANSAKSI -->
+        <div class="col-balance-transactions">
+          <div class="card-balance">
+            <div class="balance-header">
+              <span>Sisa Kuota Pagu FT Untad</span>
+              <button type="button" class="balance-arrow-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l9.2-9.2M17 17V8H8"/></svg>
+              </button>
+            </div>
+            <div class="balance-amount">Rp 22.767.353</div>
+            <div class="balance-pill">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Total Pagu: Rp 35.000.000 • AMAN</span>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="quick-actions-row">
+            <div class="action-circle-wrap">
+              <button type="button" class="action-circle-btn highlight">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              </button>
+              <span class="action-label">+ Biaya</span>
+            </div>
+            <div class="action-circle-wrap">
+              <button type="button" class="action-circle-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </button>
+              <span class="action-label">+ Posko</span>
+            </div>
+            <div class="action-circle-wrap">
+              <button type="button" class="action-circle-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+              </button>
+              <span class="action-label">Sunset v1</span>
+            </div>
+            <div class="action-circle-wrap">
+              <button type="button" class="action-circle-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg>
+              </button>
+              <span class="action-label">GraphQL</span>
+            </div>
+          </div>
+
+          <!-- Recent Transactions -->
+          <div class="card-transactions">
+            <div class="card-title-bar">
+              <h2 class="section-heading-sm">Transaksi Pengeluaran Terkini</h2>
+              <a href="#expenses" class="link-view-all">Lihat Semua</a>
+            </div>
+            <div class="transaction-list">
+              <div class="transaction-row">
+                <div class="tx-left">
+                  <div class="tx-avatar">ZA</div>
+                  <div>
+                    <div class="tx-title">Sewa Drone Sesar Sigi</div>
+                    <div class="tx-time">Hari ini, 14:20 • Zikri Adam</div>
+                  </div>
+                </div>
+                <div class="tx-amount neg">-Rp 1.250.000</div>
+              </div>
+              <div class="transaction-row">
+                <div class="tx-left">
+                  <div class="tx-avatar">TL</div>
+                  <div>
+                    <div class="tx-title">Kabel Sensor Kedap Air</div>
+                    <div class="tx-time">Kemarin, 11:45 • Trista Lambei</div>
+                  </div>
+                </div>
+                <div class="tx-amount neg">-Rp 450.000</div>
+              </div>
+              <div class="transaction-row">
+                <div class="tx-left">
+                  <div class="tx-avatar">LD</div>
+                  <div>
+                    <div class="tx-title">Registrasi IEEE Tokyo (USD)</div>
+                    <div class="tx-time">04 Nov • Lidiya</div>
+                  </div>
+                </div>
+                <div class="tx-amount neg">-Rp 4.062.500</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMN 2: TELEMETRI & POSKO -->
+        <div class="col-analytics-posko">
+          <!-- Dual Telemetry Cards -->
+          <div class="dual-stat-row">
+            <div class="stat-metric-card">
+              <div class="stat-label-row">
+                <span>Cuaca Posko Untad</span>
+                <span class="pill-badge-sm pill-cyan">OPEN-METEO</span>
+              </div>
+              <div class="stat-big-val">26.5°C</div>
+              <div class="stat-sub-text">Cerah Berawan • Angin: 12 km/h</div>
+            </div>
+            <div class="stat-metric-card">
+              <div class="stat-label-row">
+                <span>Kurs Valas Acuan</span>
+                <span class="pill-badge-sm pill-gold">EXCHANGERATE</span>
+              </div>
+              <div class="stat-big-val">Rp 16.250</div>
+              <div class="stat-sub-text">1 USD (JPY: 108 • EUR: 17.650)</div>
+            </div>
+          </div>
+
+          <!-- Micro Chart Serapan -->
+          <div class="card-chart">
+            <div class="card-title-bar">
+              <span class="section-heading-sm">Realisasi Anggaran Riset</span>
+              <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">Pekan Ini ▾</span>
+            </div>
+            <div class="chart-metric-row">
+              <div>
+                <div class="chart-val-big">Rp 12.232.647</div>
+                <div style="font-size:0.75rem; color:var(--color-safe); font-weight:600; margin-top:0.2rem;">↗ 34.9% Terserap dari Pagu</div>
+              </div>
+              <div class="chart-bars-wrap">
+                <div class="bar-col"><div class="bar-pill" style="height:25px;"></div><span class="bar-day">S</span></div>
+                <div class="bar-col"><div class="bar-pill" style="height:35px;"></div><span class="bar-day">M</span></div>
+                <div class="bar-col"><div class="bar-pill" style="height:42px;"></div><span class="bar-day">T</span></div>
+                <div class="bar-col"><div class="bar-pill active" style="height:55px;"></div><span class="bar-day">W</span></div>
+                <div class="bar-col"><div class="bar-pill" style="height:38px;"></div><span class="bar-day">T</span></div>
+                <div class="bar-col"><div class="bar-pill" style="height:48px;"></div><span class="bar-day">F</span></div>
+                <div class="bar-col"><div class="bar-pill" style="height:28px;"></div><span class="bar-day">S</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Posko Riset Aktif -->
+          <div class="card-posko">
+            <div class="card-title-bar">
+              <h2 class="section-heading-sm">Posko Riset Lapangan Aktif</h2>
+              <a href="#activities" class="link-view-all">Kelola Posko</a>
+            </div>
+            <div class="posko-item">
+              <div class="posko-left">
+                <div class="posko-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div>
+                  <div class="posko-name">Ekspedisi Sesar Palu-Koro</div>
+                  <div class="posko-loc">Kabupaten Sigi • Dr. Lidiya, M.T.</div>
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div class="posko-budget">Rp 15.000.000</div>
+                <div class="posko-status">AMAN</div>
+              </div>
+            </div>
+            <div class="posko-item">
+              <div class="posko-left">
+                <div class="posko-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
+                </div>
+                <div>
+                  <div class="posko-name">Sensor IoT Salinitas Air Laut</div>
+                  <div class="posko-loc">Teluk Palu • Ir. Tabita Theona</div>
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div class="posko-budget">Rp 20.000.000</div>
+                <div class="posko-status">AMAN</div>
+              </div>
+            </div>
+            <div class="posko-item">
+              <div class="posko-left">
+                <div class="posko-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <div>
+                  <div class="posko-name">IEEE Symposium Tokyo</div>
+                  <div class="posko-loc">Tokyo, Jepang • Delegasi Untad</div>
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div class="posko-budget">Rp 45.000.000</div>
+                <div class="posko-status" style="color:var(--color-gold);">WASPADA</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMN 3: FORMULIR CEPAT PENGELUARAN -->
+        <div class="col-fast-action-card">
+          <!-- Fast Expense Input Card -->
+          <div class="card-send-money">
+            <div class="card-title-bar">
+              <span class="section-heading-sm">Catat Pengeluaran Cepat</span>
+              <span class="currency-selector-badge" style="color:var(--color-safe);">REST v2</span>
+            </div>
+
+            <!-- Pilih Posko -->
+            <div>
+              <span class="amount-input-label" style="display:block; margin-bottom:0.35rem;">Pilih Posko Riset</span>
+              <div class="target-profile-box">
+                <div class="target-info">
+                  <div class="target-avatar">PK</div>
+                  <div>
+                    <div class="target-title">Posko Sesar Palu-Koro</div>
+                    <div class="target-sub">Sigi • Sisa Pagu: Rp 12.250.000</div>
+                  </div>
+                </div>
+                <a href="#change" class="change-link">Pilih</a>
+              </div>
+            </div>
+
+            <!-- Kategori Pengeluaran -->
+            <div class="expense-cat-wrap">
+              <span class="amount-input-label">Kategori Biaya</span>
+              <div class="expense-cat-chips">
+                <span class="cat-chip active">Sewa Alat</span>
+                <span class="cat-chip">Logistik</span>
+                <span class="cat-chip">Konsumsi</span>
+                <span class="cat-chip">Transport</span>
+                <span class="cat-chip">Publikasi</span>
+              </div>
+            </div>
+
+            <!-- Nominal & Mata Uang -->
+            <div class="amount-input-box">
+              <span class="amount-input-label">Nominal Pengeluaran</span>
+              <div class="amount-input-row">
+                <span class="amount-display">Rp 250.000</span>
+                <span class="currency-selector-badge">IDR ▾</span>
+              </div>
+            </div>
+
+            <!-- Catatan Pengeluaran -->
+            <div class="note-input-box">
+              <span class="amount-input-label">Catatan / Keperluan Riset</span>
+              <div class="note-input-preview">Bahan bakar boat survei teluk & konsumsi tim</div>
+            </div>
+
+            <!-- Telemetri Kurs Acuan -->
+            <div class="delivery-eta">
+              <span>Kurs Acuan Konversi</span>
+              <span style="font-weight:700; color:var(--text-main);">Live Bank Indonesia</span>
+            </div>
+
+            <!-- Tombol Simpan -->
+            <button type="button" class="btn-cta-continue">+ Simpan ke Buku Pengeluaran</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function setTheme(theme) {
+      const body = document.getElementById('previewBody');
+      const btnLight = document.getElementById('btnLightMode');
+      const btnDark = document.getElementById('btnDarkMode');
+
+      if (theme === 'light') {
+        body.className = 'theme-light';
+        btnLight.classList.add('active');
+        btnDark.classList.remove('active');
+      } else {
+        body.className = 'theme-dark';
+        btnDark.classList.add('active');
+        btnLight.classList.remove('active');
+      }
+    }
+  </script>
+</body>
+</html>

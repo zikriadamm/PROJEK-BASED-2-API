@@ -21,13 +21,27 @@ function kirimError(res, statusCode, pesan, detail = null, customHeaders = {}) {
   kirimJSON(res, statusCode, payload, customHeaders);
 }
 
-function bacaBody(req) {
+function bacaBody(req, maxBytes = 1024 * 1024) {
   return new Promise((resolve, reject) => {
-    let body = '';
+    const chunks = [];
+    let totalBytes = 0;
+    let terlaluBesar = false;
+
     req.on('data', (chunk) => {
-      body += chunk;
+      if (terlaluBesar) return;
+      totalBytes += chunk.length;
+      if (totalBytes > maxBytes) {
+        terlaluBesar = true;
+        const errLimit = new Error('Ukuran body request melebihi batas maksimal 1 MB.');
+        errLimit.statusCode = 413;
+        req.destroy();
+        return reject(errLimit);
+      }
+      chunks.push(chunk);
     });
     req.on('end', () => {
+      if (terlaluBesar) return;
+      const body = Buffer.concat(chunks).toString('utf-8');
       if (!body.trim()) return resolve(null);
       try {
         resolve(JSON.parse(body));
@@ -37,7 +51,9 @@ function bacaBody(req) {
         reject(errorJSON);
       }
     });
-    req.on('error', reject);
+    req.on('error', (err) => {
+      if (!terlaluBesar) reject(err);
+    });
   });
 }
 

@@ -1,7 +1,7 @@
 # Untad Field Research & Travel Expense API (Sub-CPMK 5)
 **Pengembangan API Sesuai Standar Industri — Project Based Learning (PBL)**  
 Mata Kuliah: **Rekayasa API (`F09252013`)** — Kelas TIC  
-Kelompok: **Kelompok 3**
+Kelompok: **Kelompok 2**
 
 ---
 
@@ -70,7 +70,7 @@ Isi konfigurasi default:
 ```env
 PORT=3000
 API_KEY=untad-api-key-2026
-JWT_SECRET=untad-rahasia-rekayasa-api-sub-cpmk-5-kelompok-3
+JWT_SECRET=untad-rahasia-rekayasa-api-sub-cpmk-5-kelompok-2
 NODE_ENV=development
 ```
 
@@ -155,4 +155,4 @@ Dapat dibuka langsung tanpa error pada [Swagger Editor](https://editor.swagger.i
 
 ## 📜 Berkas Laporan Proyek Akademik
 Laporan resmi format Times New Roman 12 pt, 1.5 spasi, margin 4-4-3-3 cm, ukuran A4 dengan 12 Bab lengkap tersedia di:  
-📄 `Laporan_Final_Project_Kelompok3_Rekayasa_API.docx`
+📄 `laporan-dan-arsip/laporan/FinalProject_Kelompok2_UntadFieldResearchExpenseAPI.docx`

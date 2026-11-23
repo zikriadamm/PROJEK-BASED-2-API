@@ -1,5 +1,5 @@
 console.log('================================================================================');
-console.log('  FINAL PROJECT REKAYASA API (SUB-CPMK 5) - STANDAR INDUSTRI');
+console.log('  FINAL PROJECT REKAYASA API Kelompok 2 - STANDAR INDUSTRI');
 console.log('  Sistem Manajemen Biaya & Logistik Riset Lapangan Fakultas Teknik Untad');
 console.log('  1. Lidiya (F5512530118)');
 console.log('  2. Tabita Creaselia Belicia Theona (F5512520086)');
@@ -8,7 +8,6 @@ console.log('  4. Trista Sheryl Lambei (F5512530106)');
 console.log('================================================================================');
 
 const http = require('http');
-const url = require('url');
 const path = require('path');
 const fs = require('fs/promises');
 const fsSync = require('fs');
@@ -20,7 +19,7 @@ const { handleV1Router } = require('./src/v1Router');
 const { handleV2Router } = require('./src/v2Router');
 const { executeGraphQL } = require('./src/graphqlSchema');
 
-const PUBLIC_DIR = path.join(__dirname, 'public');
+const PUBLIC_DIR = path.resolve(__dirname, 'public');
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -51,10 +50,10 @@ async function serveStaticFile(res, filePath) {
 }
 
 const server = http.createServer(async (req, res) => {
-  const parsedUrl = url.parse(req.url, true);
+  const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = parsedUrl.pathname.replace(/\/+$/, '') || '/';
   const method = req.method.toUpperCase();
-  const query = parsedUrl.query;
+  const query = Object.fromEntries(parsedUrl.searchParams.entries());
 
   // 1. CORS Preflight Handling
   if (method === 'OPTIONS') {
@@ -76,7 +75,7 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // 3. Layanan Web Dashboard Interaktif (Kriteria Nilai "Sangat Baik")
+    // 3. Layanan Web Dashboard Interaktif 
     if (pathname === '/' || pathname === '' || pathname === '/app') {
       const indexPath = path.join(PUBLIC_DIR, 'index.html');
       if (fsSync.existsSync(indexPath)) {
@@ -84,8 +83,16 @@ const server = http.createServer(async (req, res) => {
       }
     }
     if (pathname.startsWith('/public/') || pathname.startsWith('/css/') || pathname.startsWith('/js/')) {
-      const cleanPath = pathname.replace(/^\/(public|css|js)\//, '');
-      const targetPath = path.join(PUBLIC_DIR, cleanPath);
+      let decodedSubPath;
+      try {
+        decodedSubPath = decodeURIComponent(pathname.replace(/^\/(public|css|js)\//, ''));
+      } catch (e) {
+        return kirimError(res, 400, 'Format URL berkas tidak valid.');
+      }
+      const targetPath = path.resolve(PUBLIC_DIR, decodedSubPath);
+      if (!targetPath.startsWith(PUBLIC_DIR + path.sep)) {
+        return kirimError(res, 403, 'Akses direktori di luar public tidak diizinkan.');
+      }
       if (fsSync.existsSync(targetPath)) {
         return serveStaticFile(res, targetPath);
       }
@@ -96,7 +103,7 @@ const server = http.createServer(async (req, res) => {
       return kirimJSON(res, 200, {
         namaSistem: 'Untad Field Research & Travel Expense API (Sub-CPMK 5)',
         status: 'ONLINE & READY',
-        kelompok: 'Kelompok 3 - Rekayasa API FT Untad',
+        kelompok: 'Kelompok 2 - Rekayasa API FT Untad',
         keamanan: {
           wajibApiKey: true,
           headerApiKey: 'x-api-key: untad-api-key-2026',
@@ -105,6 +112,7 @@ const server = http.createServer(async (req, res) => {
         endpointsUtama: {
           webDashboard: 'GET http://localhost:' + config.PORT + '/',
           authLogin: 'POST /v2/auth/login',
+          authLogout: 'POST /v2/auth/logout',
           restV2Kegiatan: 'GET, POST /v2/activities',
           restV2Pengeluaran: 'GET, POST /v2/expenses (wajib activityId)',
           restV2Summary: 'GET /v2/expenses/summary (analisis risiko anggaran & cuaca)',
@@ -159,9 +167,12 @@ const server = http.createServer(async (req, res) => {
 
       const gqlResult = await executeGraphQL(body.query, body.variables || null, { req, user: userContext });
 
-      const statusCode = gqlResult.errors && gqlResult.errors.some(e => e.message.startsWith('401'))
-        ? 401
-        : (gqlResult.errors && gqlResult.errors.some(e => e.message.startsWith('403')) ? 403 : 200);
+      const gqlErrors = gqlResult.errors || [];
+      let statusCode = 200;
+      if (gqlErrors.some(e => e.message.startsWith('401'))) statusCode = 401;
+      else if (gqlErrors.some(e => e.message.startsWith('403'))) statusCode = 403;
+      else if (gqlErrors.some(e => e.message.startsWith('400'))) statusCode = 400;
+      else if (gqlErrors.some(e => e.message.startsWith('404'))) statusCode = 404;
 
       return kirimJSON(res, statusCode, gqlResult);
     }
@@ -169,6 +180,10 @@ const server = http.createServer(async (req, res) => {
     // 9. 404 Not Found untuk endpoint tidak dikenal
     return kirimError(res, 404, `Endpoint ${pathname} tidak ditemukan di server API FT Untad.`);
   } catch (err) {
+    const status = err.statusCode || 500;
+    if (status < 500) {
+      return kirimError(res, status, err.message);
+    }
     console.error('[Server Internal Error]', err);
     return kirimError(res, 500, 'Terjadi kesalahan internal pada server.', err.message);
   }
