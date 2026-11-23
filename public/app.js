@@ -1,4 +1,4 @@
-// Client Web Dashboard Application - Vanguard Tier (Impeccable Edition)
+// Aplikasi Web Dashboard Portal Riset FT Untad
 const API_KEY = 'untad-api-key-2026';
 let currentUser = null;
 let currentToken = sessionStorage.getItem('untad_token') || null;

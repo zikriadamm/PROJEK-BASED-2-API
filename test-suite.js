@@ -10,10 +10,10 @@ let serverProcess = null;
 
 function assert(condition, message) {
   if (condition) {
-    console.log(`  ✅ PASS: ${message}`);
+    console.log(`  [PASS] ${message}`);
     passed++;
   } else {
-    console.error(`  ❌ FAIL: ${message}`);
+    console.error(`  [FAIL] ${message}`);
     failed++;
   }
 }
@@ -46,7 +46,7 @@ async function ensureServerRunning() {
     // ignore
   }
 
-  console.log('🚀 Local server not detected. Spawning server.js for test run...');
+  console.log('[INFO] Server lokal belum aktif. Menjalankan server.js untuk pengujian...');
   serverProcess = fork('server.js', [], { stdio: 'ignore' });
   // Wait up to 3 seconds for server to be ready
   for (let i = 0; i < 30; i++) {
@@ -54,7 +54,7 @@ async function ensureServerRunning() {
     try {
       const ping = await fetch(`${BASE_URL}/`, { method: 'HEAD' }).catch(() => null);
       if (ping) {
-        console.log('✅ Server ready on http://localhost:3000\n');
+        console.log('[INFO] Server siap di http://localhost:3000\n');
         return;
       }
     } catch (e) {}

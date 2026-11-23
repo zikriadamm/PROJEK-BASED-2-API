@@ -52,7 +52,7 @@
     "currency": "IDR",
     "date": "2026-10-16",
     "notes": "Transportasi medan berat survei jalur sesar di Kabupaten Sigi",
-    "submittedBy": "Ir. Tabita C. Theona, M.T."
+    "submittedBy": "Tabita C. Theona (F5512520086)"
   },
   {
     "id": 6,
@@ -97,16 +97,5 @@
     "date": "2026-11-05",
     "notes": "Pembelian kabel kedap air",
     "submittedBy": "Muhammad Zikri Adam (F5512530117)"
-  },
-  {
-    "id": 10,
-    "activityId": 1,
-    "title": "Bahan bakar motor",
-    "category": "transportasi",
-    "amount": 3,
-    "currency": "USD",
-    "date": "2026-11-08",
-    "notes": "Bahan bakar motor",
-    "submittedBy": "Ir. Tabita C. Theona, M.T. (198504122010122003)"
   }
 ]

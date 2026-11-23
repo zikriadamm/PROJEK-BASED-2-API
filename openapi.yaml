@@ -10,7 +10,7 @@ info:
   version: 2.0.0
   contact:
     name: Kelompok 2 - Rekayasa API (Kelas TIC)
-    email: rekayasa.api.kel3@untad.ac.id
+    email: kelompok2.rekayasaapi@untad.ac.id
 servers:
   - url: http://localhost:3000
     description: Server Lokal Pengujian & Demo Kampus Untad
@@ -55,6 +55,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+
+  /v2/auth/logout:
+    post:
+      tags:
+        - Autentikasi
+      summary: Mengakhiri sesi login pengguna
+      description: Menandai sesi token klien telah berakhir di server API v2.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Logout berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sukses:
+                    type: boolean
+                    example: true
+                  pesan:
+                    type: string
+                    example: Logout berhasil. Sesi token klien telah diakhiri.
 
   # ============================================================================
   # RESOURCE: ACTIVITIES (KEGIATAN RISET FT UNTAD)
@@ -541,7 +564,7 @@ components:
               example: admin
             fullName:
               type: string
-              example: Ir. Tabita C. Theona, M.T.
+              example: Admin Keuangan FT Untad
 
     Activity:
       type: object

@@ -390,6 +390,25 @@ def add_bibliography_entry_clean(doc, text):
     return p
 
 
+def add_report_figure(doc, rel_asset_path, caption_text, width_cm=13.2):
+    """Menyisipkan gambar dokumentasi terpusat dengan caption akademik Times New Roman 11 pt."""
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.abspath(os.path.join(base_dir, rel_asset_path))
+    if os.path.exists(full_path):
+        p_img = doc.add_paragraph()
+        p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_img.paragraph_format.keep_with_next = True
+        docx_styler.set_paragraph_spacing(p_img, line_spacing=1.0, space_before_pt=6, space_after_pt=3)
+        p_img.add_run().add_picture(full_path, width=Cm(width_cm))
+
+        p_cap = doc.add_paragraph()
+        p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        docx_styler.set_paragraph_spacing(p_cap, line_spacing=1.15, space_before_pt=0, space_after_pt=8)
+        docx_styler.add_runs(p_cap, caption_text, base_bold=False, font_size_pt=11)
+        return p_img
+    return docx_styler.add_image_placeholder(doc, caption_text, left_indent_cm=1.27)
+
+
 def add_code_block(doc, code_text, left_indent_cm=1.27):
     """Blok kode program/skema berbingkai rapi tanpa memutus aliran margin akademik."""
     p = doc.add_paragraph()
@@ -425,8 +444,7 @@ def add_cover_page(doc):
     """
     base_dir = os.path.dirname(os.path.abspath(__file__))
     logo_candidates = [
-        os.path.abspath(os.path.join(base_dir, "..", "..", "tugas-keamanan-versioning-api", "assets", "logo_untad.png")),
-        os.path.abspath(os.path.join(base_dir, "..", "desain-dan-preview", "logo-untad.png")),
+        os.path.abspath(os.path.join(base_dir, "assets", "logo_untad.png")),
         os.path.abspath(os.path.join(base_dir, "..", "..", "public", "logo-untad.png")),
     ]
     logo_path = next((p for p in logo_candidates if os.path.exists(p)), None)
@@ -438,7 +456,7 @@ def add_cover_page(doc):
     ]
     bottom_blocks = [
         ("Disusun Oleh:\n1. Lidiya (F5512530118)\n2. Tabita Creaselia Belicia Theona (F5512520086)\n3. Muhammad Zikri Adam (F5512530117)\n4. Trista Sheryl Lambei (F5512530106)", False, 12),
-        ("Alamat Repositori GitHub:\nhttps://github.com/untad-engineering/untad-field-research-expense-api", False, 18),
+        ("Alamat Repositori GitHub:\nhttps://github.com/zikriadamm/PROJEK-BASED-2-API", False, 18),
         ("MATA KULIAH REKAYASA API (F09252013)\nPROGRAM STUDI S1 TEKNIK INFORMATIKA\nJURUSAN TEKNOLOGI INFORMASI\nFAKULTAS TEKNIK\nUNIVERSITAS TADULAKO\n2026", True, 0),
     ]
 
@@ -522,8 +540,8 @@ def build_final_report():
             ('Versioning Endpoint', 'Tanpa versi (`/expenses` langsung)', '`/v1` (*legacy* + *Sunset Header* 31 Des 2026) dan `/v2` (standar industri *breaking change*)'),
             ('Dukungan GraphQL', 'Tidak tersedia (hanya REST API)', '*Endpoint* `POST /graphql` *native* untuk *query* bersarang (*nested* `activities` dan `expenses`) dan *mutation*'),
             ('Dokumentasi Standar', 'Hanya berkas teks `README.md` biasa', 'Spesifikasi OpenAPI 3.0.3 resmi (`openapi.yaml`) *valid* 100% di *Swagger Editor*'),
-            ('Pengujian Otomatis', 'Pengujian manual beberapa skenario', 'Koleksi lengkap Bruno dan Postman *Runner* (7 skenario ber-*script*, 3 positif, 3 negatif, *auto-save token*)'),
-            ('Antarmuka Klien', '*Client Console* CLI sederhana', '*Client Console* CLI diperbarui (*login* dan *token*) + *Web Dashboard* Interaktif modern (Nilai Sangat Baik)')
+            ('Pengujian Otomatis', 'Pengujian manual beberapa skenario', 'Koleksi lengkap Bruno dan Postman *Runner* (8 skenario ber-*script*, *auto-save token*), serta *integration* dan E2E *test*'),
+            ('Antarmuka Klien', '*Client Console* CLI sederhana', '*Client Console* CLI diperbarui (*login* dan *token*) + *Web Dashboard* Interaktif')
         ],
         col_widths_cm=[3.5, 4.8, 5.7]
     )
@@ -616,8 +634,7 @@ def build_final_report():
     ]:
         add_clean_list_item(doc, item, list_type="bullet", num_id=bullet_id_24, base_indent_cm=1.27, text_indent_cm=0.75, space_after_pt=1)
 
-    p_img_24 = docx_styler.add_image_placeholder(doc, "Diagram Arsitektur Sistem & Alur Request Gateway API FT Untad", left_indent_cm=1.27)
-    docx_styler.set_paragraph_spacing(p_img_24, line_spacing=1.5, space_before_pt=6, space_after_pt=4)
+    add_report_figure(doc, os.path.join("assets", "diagram_arsitektur_api.png"), "Gambar 2.1 Diagram Arsitektur Sistem dan Alur Request Gateway API FT Untad", width_cm=13.2)
 
     docx_styler.add_page_break(doc)
 
@@ -633,7 +650,7 @@ def build_final_report():
         doc,
         "Berkas `openapi.yaml` disajikan secara dinamis oleh *server* pada *endpoint* `http://localhost:3000/openapi.yaml` dan telah diuji pada *Swagger Editor* (`editor.swagger.io`) dengan status *VALID* 100% tanpa adanya *error* maupun *warning* struktural. Pengembang lain dapat langsung memanfaatkan dokumentasi ini untuk membangkitkan *client SDK* atau melakukan *mocking API* secara otomatis."
     )
-    docx_styler.add_image_placeholder(doc, "Tampilan Validasi openapi.yaml pada Swagger Editor (0 Errors)", left_indent_cm=1.27)
+    add_report_figure(doc, os.path.join("assets", "swagger_openapi_valid.png"), "Gambar 3.1 Validasi Spesifikasi Kontrak openapi.yaml pada Swagger UI (0 Structural Errors)", width_cm=13.2)
 
     docx_styler.add_page_break(doc)
 
@@ -710,7 +727,7 @@ def build_final_report():
         "**Tujuan:** Menyajikan informasi kondisi cuaca *real-time* (suhu udara, kecepatan angin, dan interpretasi cuaca WMO) di titik posko kegiatan riset lapangan di Sulawesi Tengah (Kampus Untad Tondo Palu: Lat `-0.836`, Lon `119.893`; Kabupaten Sigi: Lat `-1.385`, Lon `119.967`; Teluk Palu: Lat `-0.873`, Lon `119.865`).",
         "**Alamat Endpoint:** `https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true`.",
         "**Data yang Diambil:** Objek `current_weather` (`temperature`, `windspeed`, `weathercode`, `time`).",
-        "**Mekanisme Ketahanan (Resilience):** Dilengkapi `AbortSignal.timeout(4000)` dan *fallback cache* koordinat *default* Untad Palu. Dengan strategi ini, ketersediaan layanan sistem API kelompok mencapai tingkat SLA 100% tanpa risiko *downtime* akibat ketergantungan pihak ketiga."
+        "**Mekanisme Ketahanan (Resilience):** Dilengkapi `AbortSignal.timeout(4000)` dan *fallback cache* koordinat *default* Untad Palu. Dengan strategi ini, sistem tetap mampu merespons permintaan melalui *cache* cadangan meskipun layanan pihak ketiga sedang tidak tersedia."
     ]:
         add_clean_list_item(doc, item, list_type="bullet", num_id=bullet_id_52, base_indent_cm=1.27, text_indent_cm=0.75)
 
@@ -825,7 +842,7 @@ def build_final_report():
         '    pm.expect(jsonData.error).to.include("Hanya role \\"admin\\"");\n'
         '});'
     )
-    docx_styler.add_image_placeholder(doc, "Hasil Eksekusi Pengujian Postman Runner, Test Suite, dan Web Dashboard Live", left_indent_cm=1.27)
+    add_report_figure(doc, os.path.join("assets", "dashboard_live_verifikasi.png"), "Gambar 7.1 Tampilan Antarmuka Web Dashboard Live Terintegrasi REST v2, Public API, dan GraphQL", width_cm=13.2)
 
     docx_styler.add_page_break(doc)
 
@@ -860,7 +877,7 @@ def build_final_report():
     docx_styler.set_paragraph_spacing(p_h911, line_spacing=1.5, space_before_pt=4, space_after_pt=1)
     p_c1 = docx_styler.add_conclusion_paragraph(
         doc,
-        "Proyek pengembangan API pada Evaluasi Sub-CPMK 5 ini telah berhasil memenuhi 100% spesifikasi wajib yang dipersyaratkan oleh tim dosen pengampu. Sistem berhasil berevolusi dari prototipe sederhana Sub-CPMK 4 menjadi *backend* berstandar industri dengan dua *resource* berelasi kuat berlatar Universitas Tadulako dan Sulawesi Tengah. Keamanan kriptografi mandiri (*API Key*, *Signed Token* HMAC-SHA256, *Hash Salt*, dan RBAC status 401 serta 403) berhasil diterapkan secara tangguh tanpa *framework*. Integrasi dua *Public API* (*Open-Meteo* dan *ExchangeRate-API*) terbukti kebal kegagalan berkat mekanisme *timeout* dan *in-memory cache fallback*. Penyediaan antarmuka *Web Dashboard* interaktif di samping *Client Console* CLI membuktikan kualitas implementasi yang memenuhi kriteria nilai sangat baik."
+        "Proyek pengembangan API pada Evaluasi Sub-CPMK 5 ini telah mengimplementasikan seluruh spesifikasi fungsional, keamanan, dan pengujian yang direncanakan. Sistem berevolusi dari prototipe sederhana Sub-CPMK 4 menjadi *backend* dengan dua *resource* berelasi berlatar Universitas Tadulako dan Sulawesi Tengah. Keamanan kriptografi mandiri (*API Key*, *Signed Token* HMAC-SHA256, *Hash Salt*, dan RBAC status 401 serta 403) berhasil diterapkan tanpa *framework*. Integrasi dua *Public API* (*Open-Meteo* dan *ExchangeRate-API*) terbukti tetap berjalan stabil saat gangguan jaringan berkat mekanisme *timeout* dan *in-memory cache fallback*. Penyediaan antarmuka *Web Dashboard* interaktif di samping *Client Console* CLI memberikan kemudahan interaksi dan pengujian fitur secara langsung bagi pengguna akhir."
     )
     docx_styler.set_paragraph_spacing(p_c1, line_spacing=1.5, space_before_pt=0, space_after_pt=2)
 
@@ -945,7 +962,7 @@ def build_final_report():
     docx_styler.set_paragraph_spacing(p_ttd, line_spacing=1.5, space_before_pt=6, space_after_pt=4)
     docx_styler.add_runs(
         p_ttd,
-        "Palu, 13 November 2026\nTim Pengembang Kelompok 2:"
+        "Palu, 23 November 2026\nTim Pengembang Kelompok 2:"
     )
 
     add_styled_table(

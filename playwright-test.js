@@ -12,10 +12,10 @@ async function runPlaywrightSuite() {
 
   function assert(condition, message) {
     if (condition) {
-      console.log(`  ✅ PASS: ${message}`);
+      console.log(`  [PASS] ${message}`);
       passed++;
     } else {
-      console.error(`  ❌ FAIL: ${message}`);
+      console.error(`  [FAIL] ${message}`);
       failed++;
     }
   }
@@ -24,11 +24,11 @@ async function runPlaywrightSuite() {
   let browser;
   try {
     browser = await chromium.launch({ channel: 'chrome', headless: true });
-    console.log('🌐 Browser engine launched: Google Chrome (Headless)\n');
+    console.log('[INFO] Browser headless dijalankan: Google Chrome\n');
   } catch (err) {
-    console.log('Chrome launch fallback to msedge...');
+    console.log('[INFO] Chrome tidak tersedia, beralih ke Microsoft Edge...');
     browser = await chromium.launch({ channel: 'msedge', headless: true });
-    console.log('🌐 Browser engine launched: Microsoft Edge (Headless)\n');
+    console.log('[INFO] Browser headless dijalankan: Microsoft Edge\n');
   }
 
   const context = await browser.newContext({
@@ -132,7 +132,7 @@ async function runPlaywrightSuite() {
     await page.fill('#actLocation', 'Teluk Palu, Sulawesi Tengah');
     await page.fill('#actBudgetLimit', '20000000');
     await page.fill('#actUnit', 'Teknik Geofisika FT Untad');
-    await page.fill('#actLeadResearcher', 'Dr. Lidiya, M.T.');
+    await page.fill('#actLeadResearcher', 'Lidiya');
     await page.fill('#actDesc', 'Pengukuran resistivitas sedimen pantai pasca gempa');
     
     await page.click('#formActivity button[type="submit"]');
@@ -144,13 +144,13 @@ async function runPlaywrightSuite() {
     // Take screenshot of working result
     const screenshotPath = 'laporan-dan-arsip/screenshot-verifikasi/playwright-test-result.png';
     await page.screenshot({ path: screenshotPath, fullPage: true });
-    console.log(`📸 Full-page verification screenshot saved to: ${screenshotPath}`);
+    console.log(`[INFO] Screenshot verifikasi disimpan ke: ${screenshotPath}`);
 
     // 6. Cleanup created test activity to keep data seeded
     const activitiesRaw = JSON.parse(fs.readFileSync('./data/activities.json', 'utf8'));
     const filtered = activitiesRaw.filter(a => a.title !== 'Survei Geolistrik Pantai Talise Palu');
     fs.writeFileSync('./data/activities.json', JSON.stringify(filtered, null, 2), 'utf8');
-    console.log('🧹 Cleaned up temporary test activity from database');
+    console.log('[INFO] Data kegiatan uji sementara dibersihkan dari database JSON');
 
   } catch (err) {
     console.error('Fatal Playwright Error:', err);

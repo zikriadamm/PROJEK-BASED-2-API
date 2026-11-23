@@ -67,11 +67,11 @@
         <div class="topbar-right">
           <!-- Theme Switcher Pill (Terintegrasi Rapi di Topbar) -->
           <div class="theme-switch-pill" role="radiogroup" aria-label="Pilih Tema Antarmuka">
-            <button type="button" class="theme-toggle-btn" id="btnLightMode" onclick="setTheme('light')" title="Formulasi 1: Ethereal Light">
+            <button type="button" class="theme-toggle-btn" id="btnLightMode" onclick="setTheme('light')" title="Mode Terang">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
               <span>Terang</span>
             </button>
-            <button type="button" class="theme-toggle-btn active" id="btnDarkMode" onclick="setTheme('dark')" title="Formulasi 2: Obsidian Dark">
+            <button type="button" class="theme-toggle-btn active" id="btnDarkMode" onclick="setTheme('dark')" title="Mode Gelap">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
               <span>Gelap</span>
             </button>
@@ -113,10 +113,10 @@
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l9.2-9.2M17 17V8H8"/></svg>
                 </button>
               </div>
-              <div class="balance-amount" id="budgetTotalRealisasi">Rp 12.232.647</div>
+              <div class="balance-amount" id="budgetTotalRealisasi">Rp 0</div>
               <div class="balance-pill">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                <span id="budgetRemainingText">Total Pagu: Rp 35.000.000 • AMAN</span>
+                <span id="budgetRemainingText">Memuat ringkasan pagu...</span>
               </div>
               <!-- Hidden compatibility element for budget progress & total plafon -->
               <span id="budgetTotalPlafon" class="hidden"></span>
@@ -159,36 +159,7 @@
                 <a href="javascript:void(0)" onclick="switchModuleTab('tabExpenses')" class="link-view-all">Lihat Semua</a>
               </div>
               <div class="transaction-list" id="recentTransactionsList">
-                <div class="transaction-row">
-                  <div class="tx-left">
-                    <div class="tx-avatar">ZA</div>
-                    <div>
-                      <div class="tx-title">Sewa Drone Sesar Sigi</div>
-                      <div class="tx-time">Hari ini • Zikri Adam</div>
-                    </div>
-                  </div>
-                  <div class="tx-amount neg">-Rp 1.250.000</div>
-                </div>
-                <div class="transaction-row">
-                  <div class="tx-left">
-                    <div class="tx-avatar">TL</div>
-                    <div>
-                      <div class="tx-title">Kabel Sensor Kedap Air</div>
-                      <div class="tx-time">Kemarin • Trista Lambei</div>
-                    </div>
-                  </div>
-                  <div class="tx-amount neg">-Rp 450.000</div>
-                </div>
-                <div class="transaction-row">
-                  <div class="tx-left">
-                    <div class="tx-avatar">LD</div>
-                    <div>
-                      <div class="tx-title">Registrasi IEEE Tokyo</div>
-                      <div class="tx-time">04 Nov • Lidiya</div>
-                    </div>
-                  </div>
-                  <div class="tx-amount neg">-Rp 4.062.500</div>
-                </div>
+                <div class="empty-state" style="padding:1rem; font-size:0.8rem;">Memuat transaksi terbaru...</div>
               </div>
             </div>
           </div>
@@ -202,18 +173,18 @@
                   <span>Cuaca Posko Untad</span>
                   <span class="pill-badge-sm pill-cyan">OPEN-METEO</span>
                 </div>
-                <div class="stat-big-val" id="widgetWeatherTemp">26.5°C</div>
-                <div class="stat-sub-text" id="widgetWeatherCondition">Cerah Berawan</div>
+                <div class="stat-big-val" id="widgetWeatherTemp">--°C</div>
+                <div class="stat-sub-text" id="widgetWeatherCondition">Memuat...</div>
                 <div id="widgetWeatherLocation" class="hidden">Stasiun Kampus Untad Tondo, Palu</div>
-                <div id="widgetWeatherWind" class="hidden"><span>Kecepatan Angin: 12 km/h</span></div>
+                <div id="widgetWeatherWind" class="hidden"><span>Kecepatan Angin: -- km/h</span></div>
               </div>
               <div class="stat-metric-card">
                 <div class="stat-label-row">
                   <span>Kurs Valas Acuan</span>
                   <span class="pill-badge-sm pill-gold">EXCHANGERATE</span>
                 </div>
-                <div class="stat-big-val" id="rateUSD">Rp 16.250</div>
-                <div class="stat-sub-text">1 USD (JPY: <span id="rateJPY">108</span> • EUR: <span id="rateEUR">17.650</span>)</div>
+                <div class="stat-big-val" id="rateUSD">Rp --</div>
+                <div class="stat-sub-text">1 USD (JPY: <span id="rateJPY">--</span> • EUR: <span id="rateEUR">--</span>)</div>
               </div>
             </div>
 
@@ -225,16 +196,16 @@
               </div>
               <div class="chart-metric-row">
                 <div>
-                  <div class="chart-val-big" id="chartRealisasiDisplay">Rp 12.232.647</div>
-                  <div style="font-size:0.75rem; color:var(--color-safe); font-weight:600; margin-top:0.2rem;" id="chartPercentDisplay">↗ 34.9% Terserap dari Pagu</div>
+                  <div class="chart-val-big" id="chartRealisasiDisplay">Rp 0</div>
+                  <div style="font-size:0.75rem; color:var(--color-safe); font-weight:600; margin-top:0.2rem;" id="chartPercentDisplay">Memuat persentase serapan...</div>
                 </div>
                 <div class="chart-bars-wrap" id="chartBarsContainer" aria-label="Grafik Realisasi Per Kategori">
-                  <div class="bar-col"><div class="bar-pill" style="height:25px;"></div><span class="bar-day">Blj</span></div>
-                  <div class="bar-col"><div class="bar-pill" style="height:35px;"></div><span class="bar-day">Trn</span></div>
-                  <div class="bar-col"><div class="bar-pill" style="height:42px;"></div><span class="bar-day">Akm</span></div>
-                  <div class="bar-col"><div class="bar-pill active" style="height:55px;"></div><span class="bar-day">Kns</span></div>
-                  <div class="bar-col"><div class="bar-pill" style="height:38px;"></div><span class="bar-day">Keg</span></div>
-                  <div class="bar-col"><div class="bar-pill" style="height:28px;"></div><span class="bar-day">Lny</span></div>
+                  <div class="bar-col"><div class="bar-pill" style="height:12px;"></div><span class="bar-day">Blj</span></div>
+                  <div class="bar-col"><div class="bar-pill" style="height:12px;"></div><span class="bar-day">Trn</span></div>
+                  <div class="bar-col"><div class="bar-pill" style="height:12px;"></div><span class="bar-day">Akm</span></div>
+                  <div class="bar-col"><div class="bar-pill" style="height:12px;"></div><span class="bar-day">Kns</span></div>
+                  <div class="bar-col"><div class="bar-pill" style="height:12px;"></div><span class="bar-day">Keg</span></div>
+                  <div class="bar-col"><div class="bar-pill" style="height:12px;"></div><span class="bar-day">Lny</span></div>
                 </div>
               </div>
             </div>
@@ -246,51 +217,7 @@
                 <a href="javascript:void(0)" onclick="switchModuleTab('tabActivities')" class="link-view-all">Kelola Posko</a>
               </div>
               <div id="miniPoskoList">
-                <div class="posko-item">
-                  <div class="posko-left">
-                    <div class="posko-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    </div>
-                    <div>
-                      <div class="posko-name">Ekspedisi Sesar Palu-Koro</div>
-                      <div class="posko-loc">Kabupaten Sigi • Dr. Lidiya, M.T.</div>
-                    </div>
-                  </div>
-                  <div style="text-align:right;">
-                    <div class="posko-budget">Rp 15.000.000</div>
-                    <div class="posko-status">AMAN</div>
-                  </div>
-                </div>
-                <div class="posko-item">
-                  <div class="posko-left">
-                    <div class="posko-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
-                    </div>
-                    <div>
-                      <div class="posko-name">Sensor IoT Salinitas Air Laut</div>
-                      <div class="posko-loc">Teluk Palu • Ir. Tabita Theona</div>
-                    </div>
-                  </div>
-                  <div style="text-align:right;">
-                    <div class="posko-budget">Rp 20.000.000</div>
-                    <div class="posko-status">AMAN</div>
-                  </div>
-                </div>
-                <div class="posko-item">
-                  <div class="posko-left">
-                    <div class="posko-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                    </div>
-                    <div>
-                      <div class="posko-name">IEEE Symposium Tokyo</div>
-                      <div class="posko-loc">Tokyo, Jepang • Delegasi Untad</div>
-                    </div>
-                  </div>
-                  <div style="text-align:right;">
-                    <div class="posko-budget">Rp 45.000.000</div>
-                    <div class="posko-status" style="color:var(--color-gold);">WASPADA</div>
-                  </div>
-                </div>
+                <div class="empty-state" style="padding:1rem; font-size:0.8rem;">Memuat daftar posko...</div>
               </div>
             </div>
           </div>
@@ -440,7 +367,7 @@
         <div class="panel-header">
           <div>
             <h2 class="panel-title">Verifikasi Versioning & Header HTTP Sunset (RFC 8594)</h2>
-            <p class="panel-desc">Perbandingan respons antara endpoint legasi /v1 (Sub-CPMK 4) dan REST API v2 berstandar industri.</p>
+            <p class="panel-desc">Perbandingan respons antara endpoint legasi /v1 dan REST API /v2.</p>
           </div>
         </div>
 
@@ -480,7 +407,7 @@
         <div class="panel-header">
           <div>
             <h2 class="panel-title">GraphQL Relasional Explorer (POST /graphql)</h2>
-            <p class="panel-desc">Pengujian query relasional bersarang (nested activities dan expenses) menggunakan engine native Node.js tanpa framework.</p>
+            <p class="panel-desc">Pengujian query relasional bersarang (activities dan expenses) pada endpoint GraphQL.</p>
           </div>
           <button type="button" class="btn btn-primary" id="btnRunGraphQL">
             <span>Jalankan Query</span>
@@ -537,7 +464,7 @@
         <div class="footer-inner">
           <div class="footer-meta">
             <strong style="color:var(--text-main); font-weight:800;">FAKULTAS TEKNIK UNIVERSITAS TADULAKO</strong>
-            <p style="margin-top:0.2rem;">Tugas Rekayasa API Sub-CPMK 5 • Arsitektur Backend Native HTTP & GraphQL</p>
+            <p style="margin-top:0.2rem;">Tugas Rekayasa API Sub-CPMK 5 • Backend HTTP Node.js & GraphQL</p>
           </div>
           <div class="footer-team">
             <span class="member-chip">Lidiya (F5512530118)</span>

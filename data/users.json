@@ -4,9 +4,9 @@
     "username": "admin",
     "passwordHash": "001ef9c532461d44b7048c8daf8c5521:31b2c1f58b874b0a72353f426b16b809429be07dc630f7d5dcbd33f6209421ff141c6bd144a259288a170b31a7e74503788dd4bae1c5d01b5c4e921eb8d0bc82",
     "role": "admin",
-    "fullName": "Ir. Tabita C. Theona, M.T.",
-    "identifier": "198504122010122003",
-    "email": "tabita.theona@untad.ac.id"
+    "fullName": "Admin Keuangan FT Untad",
+    "identifier": "ADMIN-FT-UNTAD",
+    "email": "keuangan.ft@untad.ac.id"
   },
   {
     "id": 2,
