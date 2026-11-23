@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "untad-pbl2-api-collection-2026",
-    "name": "PBL2 - Untad Research Expense API (Kelompok 3)",
+    "name": "PBL2 - Untad Research Expense API (Kelompok 2)",
     "description": "Koleksi pengujian otomatis API Standar Industri Sub-CPMK 5 Rekayasa API FT Untad. Dilengkapi skrip uji positif & negatif, ekstraksi token login otomatis, pengujian header Sunset, otorisasi role, dan GraphQL.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },

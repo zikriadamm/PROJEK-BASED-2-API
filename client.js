@@ -91,14 +91,14 @@ async function menuLogin() {
   });
 
   if (!res.ok) {
-    console.log(`\n❌ [Status ${res.status}] ${res.data?.error || 'Gagal login.'}`);
+    console.log(`\n[GAGAL] [Status ${res.status}] ${res.data?.error || 'Gagal login.'}`);
     return;
   }
 
   sessionToken = res.data.token;
   sessionUser = res.data.user;
 
-  console.log(`\n✅ ${res.data.pesan}`);
+  console.log(`\n[OK] ${res.data.pesan}`);
   console.log(`   Pengguna : ${sessionUser.fullName} (${sessionUser.identifier || '-'})`);
   console.log(`   Role     : ${sessionUser.role.toUpperCase()}`);
   console.log(`   Masa Berlaku Token: ${res.data.expiresIn}`);
@@ -111,7 +111,7 @@ async function menuLihatKegiatan() {
   const res = await requestAPI('/v2/activities');
 
   if (!res.ok) {
-    console.log(`❌ [Status ${res.status}] ${res.data?.error || 'Gagal mengambil data kegiatan.'}`);
+    console.log(`[GAGAL] [Status ${res.status}] ${res.data?.error || 'Gagal mengambil data kegiatan.'}`);
     return;
   }
 
@@ -137,7 +137,7 @@ async function menuLihatPengeluaran() {
   const res = await requestAPI('/v2/expenses');
 
   if (!res.ok) {
-    console.log(`❌ [Status ${res.status}] ${res.data?.error || 'Gagal mengambil data.'}`);
+    console.log(`[GAGAL] [Status ${res.status}] ${res.data?.error || 'Gagal mengambil data.'}`);
     return;
   }
 
@@ -150,7 +150,7 @@ async function menuLihatPengeluaran() {
   console.log(`Ditemukan ${items.length} catatan pengeluaran:\n`);
   items.forEach((item) => {
     console.log(`[ID #${item.id}] ${item.title}`);
-    console.log(`   Kegiatan Riset : [ID ${item.activityId}] ${item.activity.title} (📍 ${item.activity.location})`);
+    console.log(`   Kegiatan Riset : [ID ${item.activityId}] ${item.activity.title} (${item.activity.location})`);
     console.log(`   Kategori       : ${item.category.toUpperCase()}`);
     console.log(`   Nominal Asli   : ${item.cost.amount.toLocaleString('id-ID')} ${item.cost.currency}`);
     console.log(`   Konversi Live  : ${item.cost.formatRupiah} (${item.cost.kursPerSatuan})`);
@@ -164,7 +164,7 @@ async function menuLihatPengeluaran() {
 async function menuTambahPengeluaran() {
   console.log('\n--- CATAT PENGELUARAN RISET BARU (POST /v2/expenses) ---');
   if (!sessionToken) {
-    console.log('⚠️  Peringatan: Anda belum login! Operasi ini memerlukan token autentikasi.');
+    console.log('[PERINGATAN] Anda belum login! Operasi ini memerlukan token autentikasi.');
     console.log('   Silakan login terlebih dahulu melalui Menu 1.\n');
     return;
   }
@@ -195,12 +195,12 @@ async function menuTambahPengeluaran() {
   });
 
   if (!res.ok) {
-    console.log(`\n❌ [Status ${res.status}] ${res.data?.error || 'Gagal menyimpan pengeluaran.'}`);
+    console.log(`\n[GAGAL] [Status ${res.status}] ${res.data?.error || 'Gagal menyimpan pengeluaran.'}`);
     if (res.data?.detail) console.log(`   Detail: ${JSON.stringify(res.data.detail)}`);
     return;
   }
 
-  console.log(`\n✅ ${res.data.pesan}`);
+  console.log(`\n[OK] ${res.data.pesan}`);
   console.log(`   ID Pengeluaran : #${res.data.data.id}`);
   console.log(`   Terkait Kegiatan: ${res.data.data.activity.title}`);
   console.log(`   Total Nilai IDR : ${res.data.data.cost.formatRupiah}`);
@@ -211,7 +211,7 @@ async function menuTambahPengeluaran() {
 async function menuUjiOtorisasiRole() {
   console.log('\n--- UJI PEMBATASAN OTORISASI ROLE MAHASISWA (STATUS 403 FORBIDDEN) ---');
   if (!sessionToken) {
-    console.log('⚠️  Silakan login terlebih dahulu (Menu 1) menggunakan akun mahasiswa.');
+    console.log('[PERINGATAN] Silakan login terlebih dahulu (Menu 1) menggunakan akun mahasiswa.');
     return;
   }
 
@@ -221,12 +221,12 @@ async function menuUjiOtorisasiRole() {
   const res = await requestAPI('/v2/expenses/1', { method: 'DELETE' });
 
   if (res.status === 403) {
-    console.log('\n🎯 HASIL UJI 403 FORBIDDEN BERHASIL:');
+    console.log('\n[PASS] HASIL UJI 403 FORBIDDEN BERHASIL:');
     console.log(`   Status HTTP: ${res.status} Forbidden`);
     console.log(`   Pesan Server: "${res.data.error}"`);
     console.log('   Keterangan: Role mahasiswa berhasil dicegah dari operasi administratif berbahaya.');
   } else if (res.ok) {
-    console.log(`\n✅ Berhasil terhapus (Akun Anda memiliki wewenang role ADMIN: ${res.data.pesan})`);
+    console.log(`\n[OK] Berhasil terhapus (Akun Anda memiliki wewenang role ADMIN: ${res.data.pesan})`);
   } else {
     console.log(`\n[Status ${res.status}] ${res.data?.error || 'Gagal'}`);
   }
@@ -238,7 +238,7 @@ async function menuRingkasanAnggaran() {
   const res = await requestAPI('/v2/expenses/summary');
 
   if (!res.ok) {
-    console.log(`❌ [Status ${res.status}] Gagal mengambil ringkasan.`);
+    console.log(`[GAGAL] [Status ${res.status}] Gagal mengambil ringkasan.`);
     return;
   }
 
@@ -304,13 +304,13 @@ async function main() {
     else if (pilihan === '8') {
       sessionToken = null;
       sessionUser = null;
-      console.log('\n✅ Sesi login telah direset.');
+      console.log('\n[OK] Sesi login telah direset.');
     } else if (pilihan === '0') {
       console.log('\nTerima kasih telah menggunakan Client Console API FT Untad. Sampai jumpa!');
       rl.close();
       process.exit(0);
     } else {
-      console.log('\n⚠️ Pilihan menu tidak valid.');
+      console.log('\n[PERINGATAN] Pilihan menu tidak valid.');
     }
 
     await tanya('\nTekan [ENTER] untuk kembali ke menu utama...');

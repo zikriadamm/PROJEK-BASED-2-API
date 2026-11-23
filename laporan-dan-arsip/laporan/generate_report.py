@@ -10,7 +10,7 @@ Diformat penuh mengikuti standar tata tulis akademik skill `yuss-males-laprak`:
 - List hierarki native OpenXML (<w:numPr>) 1. 2. 3. -> a. b. c. dengan text indent 0.75 cm
 - Cetak miring otomatis istilah asing / non-KBBI (kbbi_italicizer + PySastrawi)
 - Sitasi ilmiah Open-Access (>= 2020) & Daftar Pustaka APA 7th Edition (hanging indent 1.27 cm)
-- Placeholder gambar dokumentasi [Sisipkan Gambar: ...]
+- Embed gambar dokumentasi dari laporan-dan-arsip/laporan/assets/
 """
 
 import os
@@ -192,7 +192,7 @@ def configure_kbbi_and_tech_terms():
         "middleware", "flat", "base64", "signature", "signatures", "expiry",
         "sunset", "deprecation", "deprecated", "successor", "semantic",
         "versioning", "mongodb", "atlas", "telegram", "flutter", "bruno",
-        "postman", "nodejs", "javascript", "playwright", "figcraft", "openapi",
+        "postman", "nodejs", "javascript", "playwright", "openapi",
         "graphql", "restful", "rest", "jsonwebtoken", "bcrypt", "crypto",
         "localhost", "github", "npm", "yaml", "json", "bearer", "admin",
         "guest", "valid", "pass", "passed", "fail", "failed", "forbidden",

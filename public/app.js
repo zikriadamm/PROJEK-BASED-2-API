@@ -92,7 +92,7 @@ function tutupModal(id) {
   if (modal) modal.classList.add('hidden');
 }
 
-// Theme Switcher (Formulasi 1: Light vs Formulasi 2: Dark)
+// Theme Switcher (Light / Dark)
 function setTheme(theme) {
   const body = document.getElementById('appBody') || document.body;
   const btnLight = document.getElementById('btnLightMode');
@@ -477,7 +477,7 @@ async function loadExpenses(categoryFilter = '') {
         </td>
         <td>
           <span style="color:var(--color-cyan); font-weight:600; font-size:0.825rem;">${escapeHtml(item.activity.title)}</span>
-          <div style="font-size:0.75rem; color:var(--text-muted);">📍 ${escapeHtml(item.activity.location)}</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">${escapeHtml(item.activity.location)}</div>
         </td>
         <td><span class="category-chip">${escapeHtml(item.category)}</span></td>
         <td><span class="amount-raw">${escapeHtml(item.cost.amount.toLocaleString('id-ID'))} ${escapeHtml(item.cost.currency)}</span></td>
